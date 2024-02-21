@@ -1,0 +1,15 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: db
+      username: user
+      password: password
+      authentication-database: admin
+      auto-index-creation: true
+      gridfs:
+        database: FileDB
+        bucket: FileDB

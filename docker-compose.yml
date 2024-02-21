@@ -1,0 +1,156 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=db
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+#    volumes:
+#      - mongo_data:/data
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=user  # Updated to match MongoDB root username
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password  # Updated to match MongoDB root password
+      - ME_CONFIG_MONGODB_SERVER=mongodb  # Points to the MongoDB service
+      - ME_CONFIG_BASICAUTH_USERNAME=admin # Username for basic auth
+      - ME_CONFIG_BASICAUTH_PASSWORD=secret # Password for basic auth
+
+  # Zookeeper Configuration
+  zookeeper:
+    container_name: zookeeper
+    restart: always
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVER_ID: 1
+    ports:
+      - "2181:2181"
+#    volumes:
+#      - ./data/zookeeper:/var/lib/zookeeper/data
+#      - ./data/zookeeper_log:/var/lib/zookeeper/log
+    networks:
+      - kafkanet
+
+  # Kafka Broker 1
+  kafka-1:
+    container_name: kafka1
+    restart: always
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_BROKER_ID: 1
+#    volumes:
+#      - ./data/kafka1:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      - kafkanet
+
+  # Kafka Broker 2
+  kafka-2:
+    container_name: kafka2
+    restart: always
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9093:9093"
+      - "29093:29093"
+    environment:
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:19093,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093,DOCKER://host.docker.internal:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_BROKER_ID: 2
+#    volumes:
+#      - ./data/kafka2:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      - kafkanet
+  # Kafka Broker 3
+  kafka-3:
+    container_name: kafka3
+    restart: always
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9094:9094"
+      - "29094:29094"
+    environment:
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094,DOCKER://host.docker.internal:29094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_BROKER_ID: 3
+#    volumes:
+#      - ./data/kafka3:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      - kafkanet
+
+  # Kafka UI
+  kafka-ui:
+    container_name: kafkaui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8085:8080
+    depends_on:
+      - zookeeper
+      - kafka-1
+      - kafka-2
+      - kafka-3
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka-1:19092,kafka-2:19093,kafka-3:19094'
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: pass
+    networks:
+      - kafkanet
+  # Database Configuration
+  database:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  kafkanet:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
