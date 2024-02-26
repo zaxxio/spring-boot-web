@@ -1,15 +1,58 @@
 spring:
+  application:
+    name: spring-boot-app
   kafka:
     bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: db
-      username: user
-      password: password
-      authentication-database: admin
-      auto-index-creation: true
-      gridfs:
-        database: FileDB
-        bucket: FileDB
+    producer:
+      retries: 10
+    consumer:
+      properties:
+        reconnect:
+          backoff:
+            ms: 1000
+            max.ms: 10000
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db
+    driver-class-name: org.postgresql.Driver
+    username: user
+    password: password
+    hikari:
+      connection-timeout: 10000
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-test-query: SELECT 1
+      initialization-fail-timeout: 0
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+http:
+  port: 80
+
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:server/keystore.p12
+    key-store-password: yourpassword
+    keyStoreType: PKCS12
+    keyAlias: springboot
+
+resilience4j:
+  retry:
+    instances:
+      photo-service-api:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+logging:
+  level:
+    org.apache.kafka: ERROR
+    org.springframework.kafka: ERROR

@@ -1,30 +1,5 @@
 version: '3.8'
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    environment:
-      - MONGO_INITDB_DATABASE=db
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=password
-#    volumes:
-#      - mongo_data:/data
-    ports:
-      - "27017:27017"
-
-  mongo-express:
-    image: mongo-express:latest
-    container_name: mongo-express
-    restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=user  # Updated to match MongoDB root username
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=password  # Updated to match MongoDB root password
-      - ME_CONFIG_MONGODB_SERVER=mongodb  # Points to the MongoDB service
-      - ME_CONFIG_BASICAUTH_USERNAME=admin # Username for basic auth
-      - ME_CONFIG_BASICAUTH_PASSWORD=secret # Password for basic auth
-
   # Zookeeper Configuration
   zookeeper:
     container_name: zookeeper
@@ -35,11 +10,11 @@ services:
       ZOOKEEPER_SERVER_ID: 1
     ports:
       - "2181:2181"
-#    volumes:
-#      - ./data/zookeeper:/var/lib/zookeeper/data
-#      - ./data/zookeeper_log:/var/lib/zookeeper/log
+    #    volumes:
+    #      - ./data/zookeeper:/var/lib/zookeeper/data
+    #      - ./data/zookeeper_log:/var/lib/zookeeper/log
     networks:
-      - kafkanet
+      - kafkaNetwork
 
   # Kafka Broker 1
   kafka-1:
@@ -59,12 +34,12 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 1
-#    volumes:
-#      - ./data/kafka1:/var/lib/kafka/data
+    #    volumes:
+    #      - ./data/kafka1:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
-      - kafkanet
+      - kafkaNetwork
 
   # Kafka Broker 2
   kafka-2:
@@ -84,12 +59,12 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 2
-#    volumes:
-#      - ./data/kafka2:/var/lib/kafka/data
+    #    volumes:
+    #      - ./data/kafka2:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
-      - kafkanet
+      - kafkaNetwork
   # Kafka Broker 3
   kafka-3:
     container_name: kafka3
@@ -108,16 +83,16 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 3
-#    volumes:
-#      - ./data/kafka3:/var/lib/kafka/data
+    #    volumes:
+    #      - ./data/kafka3:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
-      - kafkanet
+      - kafkaNetwork
 
   # Kafka UI
   kafka-ui:
-    container_name: kafkaui
+    container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8085:8080
@@ -134,7 +109,8 @@ services:
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: pass
     networks:
-      - kafkanet
+      - kafkaNetwork
+
   # Database Configuration
   database:
     container_name: postgres
@@ -144,11 +120,16 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - kafkaNetwork
 #    volumes:
 #      - postgres_data:/var/lib/postgresql/data
 
 networks:
-  kafkanet:
+  kafkaNetwork:
+    name: kafkaNetwork
     driver: bridge
 
 volumes:

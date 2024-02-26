@@ -1,18 +1,21 @@
 package org.wsd.app.config;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Log4j2
 @EnableAsync
+@EnableRetry
 @Configuration
 @EnableScheduling
 public class Config {
@@ -49,7 +52,7 @@ public class Config {
         @Override
         public void handleError(Throwable t) {
             // Log the error or perform other error handling here
-            System.err.println("Error in event listener: " + t.getMessage());
+            log.error("Error in event listener: " + t.getMessage());
         }
     }
 
