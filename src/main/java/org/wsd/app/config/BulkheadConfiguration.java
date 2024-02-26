@@ -12,7 +12,7 @@ import java.time.Duration;
 @Configuration
 @RequiredArgsConstructor
 public class BulkheadConfiguration {
-    public static final String PHOTO_SERVICE_API = "photoServiceApi";
+    public static final String PHOTO_SERVICE_API = "PHOTO-SERVICE-API";
     private final BulkheadRegistry bulkheadRegistry;
 
     @Bean

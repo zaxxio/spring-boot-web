@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -26,6 +27,8 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 @MappedSuperclass
 @RequiredArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public abstract class AbstractAuditableEntity implements Serializable {
 
     @CreatedBy

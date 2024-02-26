@@ -1,8 +1,8 @@
 package org.wsd.app.config;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -17,6 +17,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableAsync
 @EnableRetry
 @Configuration
+@EnableCaching
 @EnableScheduling
 public class Config {
 

@@ -38,9 +38,9 @@ public class TwoFactorService {
 
     public String generateQrCodeImageUri(String secret, String username) {
         QrData data = new QrData.Builder()
-                .label("WSD")
+                .label(username)
                 .secret(secret)
-                .issuer(username)
+                .issuer("WALL STREET DOCS - WSD")
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)

@@ -20,7 +20,7 @@ public class TwoFactorAuthController {
 
     private final TwoFactorService twoFactorService;
 
-    @GetMapping("/mfa/setup")
+    @GetMapping("/2Fa/configure")
     public Payload<TwoFactorResponse> twoFactorSetup(TwoFactorRequest request) {
         return twoFactorService.setup(request);
     }

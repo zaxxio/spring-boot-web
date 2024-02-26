@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,11 +21,16 @@ import java.util.UUID;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        indexes = {
+                @Index(name = "idx_users_username", columnList = "username"),
+        })
 @Builder(builderMethodName = "Builder")
 @AllArgsConstructor
 @EntityListeners(AuditEntityListener.class)
 @JsonPropertyOrder(alphabetic = true)
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "usersCache")
 public class UserEntity extends AbstractAuditableEntity implements UserDetails {
 
     @Id
@@ -45,8 +51,8 @@ public class UserEntity extends AbstractAuditableEntity implements UserDetails {
     private boolean enabled = true;
     private boolean is2FAEnabled = false;
     private String secret;
-    @Version
-    private int version;
+//    @Version
+//    private int version;
 
     @Override
     @JsonIgnore

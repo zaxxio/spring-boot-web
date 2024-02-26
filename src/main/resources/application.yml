@@ -16,16 +16,14 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: user
     password: password
-    hikari:
-      connection-timeout: 10000
-      maximum-pool-size: 5
-      minimum-idle: 2
-      idle-timeout: 30000
-      connection-test-query: SELECT 1
-      initialization-fail-timeout: 0
   jpa:
     hibernate:
       ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+
+
 
 eureka:
   client:
