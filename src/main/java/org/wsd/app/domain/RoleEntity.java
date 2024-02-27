@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.wsd.app.domain.listener.AuditEntityListener;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter

@@ -2,8 +2,10 @@ package org.wsd.app.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +13,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.wsd.app.domain.listener.AuditEntityListener;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +33,7 @@ import java.util.UUID;
 @EntityListeners(AuditEntityListener.class)
 @JsonPropertyOrder(alphabetic = true)
 @Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "usersCache")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class UserEntity extends AbstractAuditableEntity implements UserDetails {
 
     @Id
@@ -51,8 +54,6 @@ public class UserEntity extends AbstractAuditableEntity implements UserDetails {
     private boolean enabled = true;
     private boolean is2FAEnabled = false;
     private String secret;
-//    @Version
-//    private int version;
 
     @Override
     @JsonIgnore

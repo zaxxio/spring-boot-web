@@ -23,15 +23,9 @@ public class BootLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         PhotoEntity photoEntity = new PhotoEntity();
         photoEntity.setId(1L);
-        photoEntity.setName(new Faker().file().fileName());
-        photoRepository.save(photoEntity);
-        callDB();
-    }
-
-    @Transactional
-    public void callDB() {
-        photoRepository.findById(1L);
-        photoRepository.findById(2L);
+        String name = new Faker().file().fileName();
+        photoEntity.setName(name);
+        PhotoEntity photo = photoRepository.save(photoEntity);
     }
 
 }
