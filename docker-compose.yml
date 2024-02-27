@@ -4,14 +4,15 @@ services:
   springboot:
     container_name: springboot
     restart: always
-    build:
-      context: .
-      dockerfile: src/main/docker/Dockerfile
+    #    build:
+    #      context: .
+    #      dockerfile: src/main/docker/Dockerfile
+    image: parthostutradhar/zaxxio:0.0.1
     ports:
       - "8443:8443"
       - "80:80"
     environment:
-      - SPRING_PROFILE_ACTIVE=prod
+      - SPRING_PROFILE_ACTIVE=prod # run in the production mode
     depends_on:
       - zookeeper
       - kafka-1
@@ -53,7 +54,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 1
     #    volumes:
     #      - ./data/kafka1:/var/lib/kafka/data
@@ -78,7 +79,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 2
     #    volumes:
     #      - ./data/kafka2:/var/lib/kafka/data
@@ -102,7 +103,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 3
     #    volumes:
     #      - ./data/kafka3:/var/lib/kafka/data

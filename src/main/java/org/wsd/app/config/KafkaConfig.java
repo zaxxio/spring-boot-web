@@ -78,7 +78,7 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.RETRIES_CONFIG, 10);
         configProps.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5);
         configProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, CompressionType.SNAPPY.name);
-        configProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "tx-1");
+        configProps.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "tx-" + UUID.randomUUID());
         configProps.put(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, 15000);
         configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "pid");
         // Additional configurations for enhanced performance and reliability
