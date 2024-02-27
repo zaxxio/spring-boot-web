@@ -47,14 +47,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TwoFactorService twoFactorService;
 
     @Override
-    @Transactional(readOnly = true, isolation = Isolation.SERIALIZABLE)
-    public Payload<SignInResponse> signIn(SignInRequest signInRequest) throws TwoFactorFailedException {
+    //@Transactional(readOnly = true, isolation = Isolation.SERIALIZABLE)
+    public Payload<SignInResponse> signIn(SignInRequest signInRequest) throws TwoFactorFailedException, UsernameNotFoundException {
 
-        Optional<UserEntity> userEntity = userRepository.findUserEntityByUsername(signInRequest.getUsername());
-        if (userEntity.isEmpty()) {
-            throw new UsernameNotFoundException("Username not found in the database");
-        }
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword(), userEntity.get().getAuthorities());
+        UserEntity user = userRepository.findUserEntityByUsername(signInRequest.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(signInRequest.getUsername() + " not found in the database."));
+        final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                signInRequest.getUsername(),
+                signInRequest.getPassword(),
+                user.getAuthorities()
+        );
         Authentication authenticated = authenticationManager.authenticate(token);
 
         SecurityContextHolder.getContext().setAuthentication(authenticated);
@@ -64,9 +66,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Instant now = Instant.now();
         Instant validity = now.plus(jwtConfig.getExpiration(), ChronoUnit.MINUTES);
 
-        if (userEntity.get().is2FAEnabled()) {
-            if (signInRequest.getCode() != null && twoFactorService.isOtpNotValid(userEntity.get().getSecret(), signInRequest.getCode())) {
-                throw new TwoFactorFailedException("Valid two factor authentication required : " + userEntity.get().getUsername());
+        if (user.is2FAEnabled()) {
+            if (signInRequest.getCode() != null && twoFactorService.isOtpNotValid(user.getSecret(), signInRequest.getCode())) {
+                throw new TwoFactorFailedException("Valid two factor authentication required : " + user.getUsername());
             }
         }
 
@@ -103,7 +105,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.set2FAEnabled(false);
 
-        RoleEntity role = new RoleEntity();
+        final RoleEntity role = new RoleEntity();
         role.setName("USER");
         user.setRoleEntities(Set.of(role));
 

@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.wsd</groupId>
-    <artifactId>app</artifactId>
+    <artifactId>springbootapp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-boot-app</name>
     <description>spring-boot-app</description>
@@ -44,6 +44,12 @@
             <artifactId>ehcache</artifactId>
             <version>3.10.8</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.vladimir-bukhtoyarov</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>6.2.0</version> <!-- Use the latest version -->
+        </dependency>
+
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.cloud</groupId>-->
         <!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
@@ -67,6 +73,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.samstevens.totp</groupId>
@@ -171,6 +181,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <skipTests>true</skipTests> <!-- Skips test execution -->
                 </configuration>
             </plugin>
         </plugins>

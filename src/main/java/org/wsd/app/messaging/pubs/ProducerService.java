@@ -32,7 +32,7 @@ public class ProducerService {
         return args -> {
             for (int i = 0; i < 10; i++) {
                 try {
-                    //producerService.process(i);
+                    producerService.process(i);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }

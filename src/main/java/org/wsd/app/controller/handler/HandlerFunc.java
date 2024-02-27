@@ -4,6 +4,7 @@ import org.apache.kafka.common.KafkaException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -45,29 +46,31 @@ public class HandlerFunc {
 
     @ExceptionHandler({DataAccessException.class, CannotCreateTransactionException.class, KafkaException.class})
     public ResponseEntity<Payload<?>> handleDatabaseException(Exception e) {
-        // Log the exception for debugging purposes
-        // Assuming there's a logger available
         log.error("Database access error: ", e);
-
-        // Create a payload with a message indicating the service is temporarily unavailable
-        Payload<?> responsePayload = new Payload.Builder<>()
+        final Payload<?> responsePayload = new Payload.Builder<>()
                 .message("Service temporarily unavailable due to a database issue. Please try again later." + e.getMessage())
                 .build();
-
-        // Return a ResponseEntity with the custom payload and HTTP status 503 Service Unavailable
         return new ResponseEntity<>(responsePayload, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    @ExceptionHandler({TwoFactorFailedException.class})
-    public ResponseEntity<Payload<?>> twoFactorFailed(Exception e) {
-        // Log the exception for debugging purposes
-        // Assuming there's a logger available
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Payload<?>> userNotFound(UsernameNotFoundException e) {
         log.error(e.getMessage());
-        // Create a payload with a message indicating the service is temporarily unavailable
-        Payload<?> responsePayload = new Payload.Builder<>()
+        final Payload<?> responsePayload = new Payload.Builder<>()
                 .message(e.getMessage())
                 .build();
-        // Return a ResponseEntity with the custom payload and HTTP status 503 Service Unavailable
+        return new ResponseEntity<>(responsePayload, HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler({TwoFactorFailedException.class})
+    public ResponseEntity<Payload<?>> twoFactorFailed(Exception e) {
+        log.error(e.getMessage());
+        final Payload<?> responsePayload = new Payload.Builder<>()
+                .message(e.getMessage())
+                .build();
         return new ResponseEntity<>(responsePayload, HttpStatus.SERVICE_UNAVAILABLE);
     }
 }

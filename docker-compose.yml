@@ -1,5 +1,26 @@
 version: '3.8'
 services:
+  # application
+  springboot:
+    container_name: springboot
+    restart: always
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile
+    ports:
+      - "8443:8443"
+      - "80:80"
+    environment:
+      - SPRING_PROFILE_ACTIVE=prod
+    depends_on:
+      - zookeeper
+      - kafka-1
+      - kafka-2
+      - kafka-3
+      - database
+      - kafka-ui
+    networks:
+      - cloudNetwork
   # Zookeeper Configuration
   zookeeper:
     container_name: zookeeper
@@ -14,7 +35,7 @@ services:
     #      - ./data/zookeeper:/var/lib/zookeeper/data
     #      - ./data/zookeeper_log:/var/lib/zookeeper/log
     networks:
-      - kafkaNetwork
+      - cloudNetwork
 
   # Kafka Broker 1
   kafka-1:
@@ -32,14 +53,14 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 1
     #    volumes:
     #      - ./data/kafka1:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
-      - kafkaNetwork
+      - cloudNetwork
 
   # Kafka Broker 2
   kafka-2:
@@ -57,14 +78,14 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 2
     #    volumes:
     #      - ./data/kafka2:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
-      - kafkaNetwork
+      - cloudNetwork
   # Kafka Broker 3
   kafka-3:
     container_name: kafka3
@@ -81,14 +102,14 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+#      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 3
     #    volumes:
     #      - ./data/kafka3:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
-      - kafkaNetwork
+      - cloudNetwork
 
   # Kafka UI
   kafka-ui:
@@ -109,7 +130,7 @@ services:
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: pass
     networks:
-      - kafkaNetwork
+      - cloudNetwork
 
   # Database Configuration
   database:
@@ -123,13 +144,13 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - kafkaNetwork
+      - cloudNetwork
 #    volumes:
 #      - postgres_data:/var/lib/postgresql/data
 
 networks:
-  kafkaNetwork:
-    name: kafkaNetwork
+  cloudNetwork:
+    name: cloudNetwork
     driver: bridge
 
 volumes:

@@ -5,4 +5,4 @@ FROM maven:3.8.1-openjdk-17
 COPY ./../../../target/app.jar app.jar
 EXPOSE 8443
 #CMD ["java", "-jar", "target/app.jar"]
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-Xms2024m", "-Xmx3024m", "-jar", "app.jar"]

@@ -94,7 +94,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(PUBLIC_URLS).permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/auth/*").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/signIn").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/auth/signUp").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .headers(config -> {

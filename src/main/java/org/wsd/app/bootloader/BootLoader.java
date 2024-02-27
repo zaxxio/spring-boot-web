@@ -1,6 +1,7 @@
 package org.wsd.app.bootloader;
 
 import com.github.javafaker.Faker;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
