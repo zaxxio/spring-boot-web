@@ -1,27 +1,32 @@
 version: '3.8'
 services:
   # application
-  springboot:
-    container_name: springboot
-    restart: always
-    #    build:
-    #      context: .
-    #      dockerfile: src/main/docker/Dockerfile
-    image: parthostutradhar/zaxxio:0.0.1
+#  springboot:
+#    container_name: springboot
+#    restart: always
+#    #    build:
+#    #      context: .
+#    #      dockerfile: src/main/docker/Dockerfile
+#    image: parthostutradhar/zaxxio:0.0.1
+#    ports:
+#      - "8443:8443"
+#      - "80:80"
+#    environment:
+#      - SPRING_PROFILE_ACTIVE=prod # run in the production mode
+#    depends_on:
+#      - zookeeper
+#      - kafka-1
+#      - kafka-2
+#      - kafka-3
+#      - database
+#      - kafka-ui
+#    networks:
+#      - cloudNetwork
+  eurekaserver:
+    container_name: eurekaserver
+    image: parthostutradhar/eureka:0.0.1
     ports:
-      - "8443:8443"
-      - "80:80"
-    environment:
-      - SPRING_PROFILE_ACTIVE=prod # run in the production mode
-    depends_on:
-      - zookeeper
-      - kafka-1
-      - kafka-2
-      - kafka-3
-      - database
-      - kafka-ui
-    networks:
-      - cloudNetwork
+      - "8761:8761"
   # Zookeeper Configuration
   zookeeper:
     container_name: zookeeper

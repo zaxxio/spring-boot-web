@@ -2,6 +2,7 @@ package org.wsd.app.controller.handler;
 
 import org.apache.kafka.common.KafkaException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,6 @@ import static org.apache.kafka.common.requests.DeleteAclsResponse.log;
 public class HandlerFunc {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Payload<Map<String, String>>> handleValidationException(MethodArgumentNotValidException exception) {
         final Map<String, String> errors = new HashMap<>();
 
@@ -55,13 +55,21 @@ public class HandlerFunc {
 
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Payload<?>> userNotFound(UsernameNotFoundException e) {
         log.error(e.getMessage());
         final Payload<?> responsePayload = new Payload.Builder<>()
                 .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(responsePayload, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Payload<?>> userNotFound(DataIntegrityViolationException e) {
+        log.error(e.getMessage());
+        final Payload<?> responsePayload = new Payload.Builder<>()
+                .message(e.getMessage())
+                .build();
+        return new ResponseEntity<>(responsePayload, HttpStatus.BAD_REQUEST);
     }
 
 

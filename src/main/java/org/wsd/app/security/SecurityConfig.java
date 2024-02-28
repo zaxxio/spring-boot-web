@@ -107,12 +107,12 @@ public class SecurityConfig {
                     exceptionHandler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                     exceptionHandler.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                 })
-                .portMapper(portMapperConfig -> {
-                    portMapperConfig.http(httpPort).mapsTo(redirectToHttpsPort);
-                })
-                .requiresChannel(channelRequestMatcherRegistry -> {
-                    channelRequestMatcherRegistry.anyRequest().requiresSecure();
-                })
+//                .portMapper(portMapperConfig -> {
+//                    portMapperConfig.http(httpPort).mapsTo(redirectToHttpsPort);
+//                })
+//                .requiresChannel(channelRequestMatcherRegistry -> {
+//                    channelRequestMatcherRegistry.anyRequest().requiresSecure();
+//                })
                 .oauth2ResourceServer(oauth2ResourceServer -> {
                     oauth2ResourceServer.jwt(Customizer.withDefaults());
                 })

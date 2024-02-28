@@ -17,13 +17,11 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.stream.IntStream;
 
 @Log4j2
-//@EnableDiscoveryClient
 @EnableFeignClients
-@SpringBootApplication(exclude = HazelcastAutoConfiguration.class)
+@EnableDiscoveryClient
+@SpringBootApplication
 public class Application {
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
 }

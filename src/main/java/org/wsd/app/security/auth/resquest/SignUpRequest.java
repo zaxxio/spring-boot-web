@@ -1,11 +1,13 @@
 package org.wsd.app.security.auth.resquest;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
+@Builder
 public class SignUpRequest {
     @Email(message = "User must provide their email address.")
     @NotEmpty(message = "Username can not be blank.")

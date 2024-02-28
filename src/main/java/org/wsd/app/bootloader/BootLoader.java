@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class BootLoader implements CommandLineRunner {
     private final PhotoRepository photoRepository;
-
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -28,5 +27,4 @@ public class BootLoader implements CommandLineRunner {
         photoEntity.setName(name);
         PhotoEntity photo = photoRepository.save(photoEntity);
     }
-
 }
