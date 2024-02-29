@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,10 +30,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.oauth2.server.resource.web.access.server.BearerTokenServerAccessDeniedHandler;
@@ -45,6 +43,7 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import org.wsd.app.repository.UserRepository;
 import org.wsd.app.security.jwt.JwtConfig;
 
@@ -65,7 +64,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/public/**",
             "/actuator/**",
-            // "/websocket"
+             "/websocket"
     };
 
     @Value("${http.port}")
@@ -108,12 +107,12 @@ public class SecurityConfig {
                     exceptionHandler.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
                     exceptionHandler.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
                 })
-//                .portMapper(portMapperConfig -> {
-//                    portMapperConfig.http(httpPort).mapsTo(redirectToHttpsPort);
-//                })
-//                .requiresChannel(channelRequestMatcherRegistry -> {
-//                    channelRequestMatcherRegistry.anyRequest().requiresSecure();
-//                })
+                .portMapper(portMapperConfig -> {
+                    portMapperConfig.http(httpPort).mapsTo(redirectToHttpsPort);
+                })
+                .requiresChannel(channelRequestMatcherRegistry -> {
+                    channelRequestMatcherRegistry.anyRequest().requiresSecure();
+                })
                 .oauth2ResourceServer(oauth2ResourceServer -> {
                     oauth2ResourceServer.jwt(Customizer.withDefaults());
                 })
@@ -146,12 +145,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder() {
+    @Scope("prototype")
+    public JwtDecoder jwtDecoder() throws Exception {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(getSecretKey()).macAlgorithm(MacAlgorithm.HS512).build();
         return token -> {
             try {
                 return jwtDecoder.decode(token);
-            } catch (Exception e) {
+            } catch (BadJwtException e) {
                 System.out.println(e);
                 throw e;
             }

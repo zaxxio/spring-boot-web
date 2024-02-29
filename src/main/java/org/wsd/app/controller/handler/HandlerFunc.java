@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -51,6 +52,14 @@ public class HandlerFunc {
                 .message("Service temporarily unavailable due to a database issue. Please try again later." + e.getMessage())
                 .build();
         return new ResponseEntity<>(responsePayload, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+
+    @ExceptionHandler(BadJwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<String> handleBadJwtException(BadJwtException ex) {
+        // Custom error handling logic
+        return new ResponseEntity<>("Invalid JWT token: " + ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
 
