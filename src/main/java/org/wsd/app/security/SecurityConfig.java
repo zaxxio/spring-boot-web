@@ -64,7 +64,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/public/**",
-            "/actuator/**"
+            "/actuator/**",
+            // "/websocket"
     };
 
     @Value("${http.port}")

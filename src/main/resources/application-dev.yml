@@ -33,11 +33,11 @@ http:
 
 server:
   port: 8443
-#  ssl:
-#    key-store: classpath:server/keystore.p12
-#    key-store-password: yourpassword
-#    keyStoreType: PKCS12
-#    keyAlias: springboot
+  ssl:
+    key-store: classpath:server/keystore.p12
+    key-store-password: yourpassword
+    keyStoreType: PKCS12
+    keyAlias: springboot
 
 management:
   endpoints:
