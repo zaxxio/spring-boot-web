@@ -20,9 +20,9 @@ public class PingTask {
         sessions.remove(session);
     }
 
-    @Scheduled(fixedRate = 1000) // Ping interval of 30 seconds
+    @Scheduled(fixedRate = 1000) // Ping interval of 1 seconds
     public void sendPings() {
-        TextMessage pingMessage = new TextMessage("ping");
+        TextMessage pingMessage = new TextMessage("Ping: ");
         for (WebSocketSession session : sessions) {
             try {
                 if (session.isOpen()) {

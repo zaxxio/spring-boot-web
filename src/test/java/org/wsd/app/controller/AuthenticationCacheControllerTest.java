@@ -18,7 +18,7 @@ import org.wsd.app.security.auth.resquest.SignUpRequest;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AuthenticationControllerTest {
+class AuthenticationCacheControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
