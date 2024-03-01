@@ -1,14 +1,16 @@
 package org.wsd.app.service;
 
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = "dataService")
 public class DataService {
 
-    @Cacheable(value = "dataCache")
+    @Cacheable
     public List<String> getData() {
         System.out.println("Fetching data from method");
         // Simulate fetching data from a database or external service

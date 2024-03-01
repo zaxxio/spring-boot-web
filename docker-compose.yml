@@ -139,18 +139,42 @@ services:
       - cloudNetwork
 
   # Database Configuration
-  database:
-    container_name: postgres
-    image: postgres:latest
+  postgresql-master:
+    image: bitnami/postgresql
     restart: always
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
-    networks:
-      - cloudNetwork
+      - '5432:5432'
+#    volumes:
+#      - postgresql_master_data:/bitnami/postgresql
+#      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    environment:
+      - POSTGRESQL_PGAUDIT_LOG=READ,WRITE
+      - POSTGRESQL_LOG_HOSTNAME=true
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_user
+      - POSTGRESQL_USERNAME=${DB_USERNAME}
+      - POSTGRESQL_PASSWORD=${DB_PASSWORD}
+      - POSTGRESQL_DATABASE=${DB_NAME}
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  postgresql-slave:
+    image: bitnami/postgresql
+    restart: always
+    ports:
+      - '5432'
+    depends_on:
+      - postgresql-master
+    environment:
+      - POSTGRESQL_PASSWORD=password
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_PGAUDIT_LOG=READ
+      - POSTGRESQL_LOG_HOSTNAME=true
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_user
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - ALLOW_EMPTY_PASSWORD=yes
   #    volumes:
   #      - postgres_data:/var/lib/postgresql/data
 
@@ -170,3 +194,5 @@ networks:
 volumes:
   postgres_data:
   mongo_data:
+  postgresql_master_data:
+    driver: local

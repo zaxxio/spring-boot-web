@@ -29,13 +29,5 @@ public class BootLoader implements CommandLineRunner {
         String name = new Faker().file().fileName();
         photoEntity.setName(name);
         PhotoEntity photo = photoRepository.save(photoEntity);
-
-
-        // Start a Redis transaction
-
-        // Queue up some operations
-        template.opsForValue().set("key1", "value1");
-        template.opsForValue().set("key2", "value2");
-
     }
 }
