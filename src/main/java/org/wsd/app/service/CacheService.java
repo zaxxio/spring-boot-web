@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 @CacheConfig(cacheNames = "dataService")
-public class DataService {
+public class CacheService {
 
     @Cacheable
     public List<String> getData() {

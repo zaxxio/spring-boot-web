@@ -22,11 +22,7 @@ spring:
     show-sql: false
     properties:
       hibernate.format_sql: false
-  data:
-    redis:
-      password: password
-      port: 6379
-      host: localhost
+
 
 eureka:
   client:

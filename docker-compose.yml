@@ -1,32 +1,5 @@
 version: '3.8'
 services:
-  # application
-  #  springboot:
-  #    container_name: springboot
-  #    restart: always
-  #    #    build:
-  #    #      context: .
-  #    #      dockerfile: src/main/docker/Dockerfile
-  #    image: parthostutradhar/zaxxio:0.0.1
-  #    ports:
-  #      - "8443:8443"
-  #      - "80:80"
-  #    environment:
-  #      - SPRING_PROFILE_ACTIVE=prod # run in the production mode
-  #    depends_on:
-  #      - zookeeper
-  #      - kafka-1
-  #      - kafka-2
-  #      - kafka-3
-  #      - database
-  #      - kafka-ui
-  #    networks:
-  #      - cloudNetwork
-  eurekaserver:
-    container_name: eurekaserver
-    image: parthostutradhar/eureka:0.0.1
-    ports:
-      - "8761:8761"
   # Zookeeper Configuration
   zookeeper:
     container_name: zookeeper
@@ -42,7 +15,6 @@ services:
     #      - ./data/zookeeper_log:/var/lib/zookeeper/log
     networks:
       - cloudNetwork
-
   # Kafka Broker 1
   kafka-1:
     container_name: kafka1
@@ -177,15 +149,6 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
   #    volumes:
   #      - postgres_data:/var/lib/postgresql/data
-
-  # Redis Master Configuration
-  cache-server:
-    container_name: cache-server
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes --requirepass password
-
 networks:
   cloudNetwork:
     name: cloudNetwork

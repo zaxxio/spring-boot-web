@@ -1,5 +1,6 @@
 package org.wsd.app.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class TwoFactorAuthController {
 
     private final TwoFactorService twoFactorService;
 
+    @Operation(description = "Two Factor Authentication", summary = "Endpoint for two factor authentication service enable and disable.")
     @GetMapping("/2Fa/configure")
     public Payload<TwoFactorResponse> twoFactorSetup(TwoFactorRequest request) {
         return twoFactorService.setup(request);
