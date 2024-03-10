@@ -1,6 +1,7 @@
 package org.wsd.app.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.wsd.app.grpc.OrderService;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Order")
 @SecurityRequirement(name = "BEARER_TOKEN")
 @RequestMapping("/api/orders")
 public class OrderController {

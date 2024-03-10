@@ -21,6 +21,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableScheduling
 public class Config {
 
+    public Config() {
+    }
+
     @Bean
     @Primary
     public ApplicationEventMulticaster multicaster(ThreadPoolTaskExecutor executor,
