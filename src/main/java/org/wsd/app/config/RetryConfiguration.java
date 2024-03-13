@@ -32,5 +32,4 @@ import java.time.Duration;
 @Configuration
 public class RetryConfiguration {
 
-
 }

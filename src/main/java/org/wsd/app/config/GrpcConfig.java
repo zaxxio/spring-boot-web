@@ -23,12 +23,14 @@
 package org.wsd.app.config;
 
 import io.grpc.ManagedChannelBuilder;
+import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.client.channelfactory.GrpcChannelConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.wsd.app.grpc.interceptor.ErrorHandlingClientInterceptor;
+import org.wsd.app.grpc.interceptor.GrpcClientInterceptor;
 
 @Configuration
 @ImportAutoConfiguration({
@@ -40,17 +42,19 @@ import org.wsd.app.grpc.interceptor.ErrorHandlingClientInterceptor;
         net.devh.boot.grpc.client.autoconfigure.GrpcDiscoveryClientAutoConfiguration.class,
         net.devh.boot.grpc.common.autoconfigure.GrpcCommonCodecAutoConfiguration.class,
 })
+@RequiredArgsConstructor
 public class GrpcConfig {
 
 
-    @Autowired
-    private ErrorHandlingClientInterceptor errorHandlingClientInterceptor;
+    private final ErrorHandlingClientInterceptor errorHandlingClientInterceptor;
+    private final GrpcClientInterceptor grpcClientInterceptor;
 
     @Bean
     public GrpcChannelConfigurer clientInterceptorConfigurer() {
         return (channelBuilder, name) -> {
-            if (channelBuilder instanceof ManagedChannelBuilder) {
+            if (channelBuilder != null) {
                 channelBuilder.intercept(errorHandlingClientInterceptor);
+                channelBuilder.intercept(grpcClientInterceptor);
             }
         };
     }

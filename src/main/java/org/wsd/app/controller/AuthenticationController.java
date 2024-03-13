@@ -28,7 +28,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-
     @ResponseStatus(value = HttpStatus.OK)
     @Operation(description = "Sign In", summary = "Endpoint for user sign in.")
     @PostMapping(path = "/signIn",
@@ -42,7 +41,6 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(authenticationService.signIn(signInRequest));
     }
-
     @Operation(description = "Sign Up", summary = "Endpoint for user sign up.")
     @PostMapping(path = "/signUp",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},

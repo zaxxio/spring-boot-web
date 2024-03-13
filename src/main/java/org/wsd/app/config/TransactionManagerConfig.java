@@ -45,10 +45,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @EnableTransactionManagement
 public class TransactionManagerConfig {
-
-
     private final ProducerFactory<UUID, Object> producerFactory;
-
     @Primary
     @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {

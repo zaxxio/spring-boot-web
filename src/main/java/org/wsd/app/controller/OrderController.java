@@ -14,9 +14,7 @@ import org.wsd.app.grpc.OrderService;
 @SecurityRequirement(name = "BEARER_TOKEN")
 @RequestMapping("/api/orders")
 public class OrderController {
-
     private final OrderService orderService;
-
     @GetMapping("/{orderId}")
     @ResponseStatus(HttpStatus.FOUND)
     public ResponseEntity<?> getOrderById(@PathVariable("orderId") int orderId) {
@@ -25,5 +23,4 @@ public class OrderController {
         return ResponseEntity.
                 ok("Success");
     }
-
 }

@@ -130,6 +130,7 @@ services:
       - POSTGRESQL_DATABASE=${DB_NAME}
       - ALLOW_EMPTY_PASSWORD=yes
 
+  # Postgres Slave
   postgresql-slave:
     image: bitnami/postgresql
     restart: always

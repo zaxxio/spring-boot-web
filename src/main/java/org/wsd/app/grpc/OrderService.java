@@ -38,7 +38,7 @@ import java.util.Iterator;
 public class OrderService {
 
     @GrpcClient("grpc-client")
-    OrderServiceGrpc.OrderServiceBlockingStub orderServiceBlockingStub;
+    public OrderServiceGrpc.OrderServiceBlockingStub orderServiceBlockingStub;
 
     public void getOrderById(int orderId) {
         log.info("Order Request Id : " + orderId);
