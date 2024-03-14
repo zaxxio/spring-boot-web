@@ -20,10 +20,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @EnableCaching
 @EnableScheduling
 public class Config {
-
-    public Config() {
-    }
-
     @Bean
     @Primary
     public ApplicationEventMulticaster multicaster(ThreadPoolTaskExecutor executor,

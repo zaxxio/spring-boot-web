@@ -116,9 +116,9 @@ services:
     restart: always
     ports:
       - '5432:5432'
-#    volumes:
-#      - postgresql_master_data:/bitnami/postgresql
-#      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    #    volumes:
+    #      - postgresql_master_data:/bitnami/postgresql
+    #      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
     environment:
       - POSTGRESQL_PGAUDIT_LOG=READ,WRITE
       - POSTGRESQL_LOG_HOSTNAME=true
@@ -150,12 +150,35 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
   #    volumes:
   #      - postgres_data:/var/lib/postgresql/data
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=username
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_BASICAUTH_USERNAME=username
+      - ME_CONFIG_BASICAUTH_PASSWORD=password
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=username
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+
 networks:
   cloudNetwork:
     name: cloudNetwork
     driver: bridge
 
 volumes:
+  mongo-data:
   postgres_data:
   mongo_data:
   postgresql_master_data:

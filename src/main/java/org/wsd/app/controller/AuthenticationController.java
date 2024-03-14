@@ -52,5 +52,4 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authenticationService.signUp(signUpRequest));
     }
-
 }

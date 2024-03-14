@@ -1,7 +1,15 @@
 spring:
   profiles:
     active: ${SPRING_PROFILE_ACTIVE:dev}
-
+  data:
+    mongodb:
+      authentication-database: admin
+      auto-index-creation: true
+      database: mongodb
+      username: username
+      password: password
+      port: 27017
+      host: localhost
 
 grpc:
   client:

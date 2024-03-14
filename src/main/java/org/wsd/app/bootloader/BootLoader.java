@@ -26,9 +26,14 @@ import com.github.javafaker.Faker;
 import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wsd.app.domain.PhotoEntity;
+import org.wsd.app.mongo.Address;
+import org.wsd.app.mongo.Gender;
+import org.wsd.app.mongo.Person;
+import org.wsd.app.mongo.PersonRepository;
 import org.wsd.app.repository.PhotoRepository;
 import org.wsd.app.repository.UserRepository;
 
@@ -40,6 +45,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class BootLoader implements CommandLineRunner {
     private final PhotoRepository photoRepository;
+    private final PersonRepository personRepository;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -48,5 +55,17 @@ public class BootLoader implements CommandLineRunner {
         String name = new Faker().file().fileName();
         photoEntity.setName(name);
         PhotoEntity photo = photoRepository.save(photoEntity);
+
+
+        Person person = new Person();
+        person.setUsername("username1");
+        person.setPassword("password");
+        Address address = new Address();
+        address.setName("Mirpur");
+        person.setAddress(address);
+        person.setGender(Gender.MALE);
+
+        personRepository.save(person);
+
     }
 }
