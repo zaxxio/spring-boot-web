@@ -10,6 +10,10 @@ spring:
       password: password
       port: 27017
       host: localhost
+      #      gridfs:
+      #        bucket: storagedb
+      #        database: storage
+
 
 grpc:
   client:

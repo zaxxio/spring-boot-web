@@ -65,7 +65,7 @@ public class BootLoader implements CommandLineRunner {
         person.setAddress(address);
         person.setGender(Gender.MALE);
 
-        personRepository.save(person);
+        // personRepository.save(person);
 
     }
 }

@@ -24,7 +24,7 @@ import java.util.Collections;
 @Log
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication")
+@Tag(name = "Authentication Controller")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;

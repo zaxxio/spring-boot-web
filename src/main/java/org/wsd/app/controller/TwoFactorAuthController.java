@@ -16,10 +16,11 @@ import org.wsd.app.security.auth.impl.TwoFactorService;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Two Factor Authentication")
+@Tag(name = "Two Factor Authentication Controller")
 @SecurityRequirement(name = "BEARER_TOKEN")
 public class TwoFactorAuthController {
     private final TwoFactorService twoFactorService;
+
     @Operation(description = "Two Factor Authentication", summary = "Endpoint for two factor authentication service enable and disable.")
     @GetMapping("/2Fa/configure")
     public Payload<TwoFactorResponse> twoFactorSetup(TwoFactorRequest request) {

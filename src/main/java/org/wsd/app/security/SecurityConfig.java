@@ -27,6 +27,7 @@ import com.nimbusds.jose.util.Base64;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.quartz.SchedulerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -175,7 +176,7 @@ public class SecurityConfig {
                 return jwtDecoder.decode(token);
             } catch (BadJwtException e) {
                 System.out.println(e);
-                throw e;
+                throw new BadJwtException(e.getMessage());
             }
         };
     }

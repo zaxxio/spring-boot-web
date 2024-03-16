@@ -10,7 +10,7 @@ import org.wsd.app.grpc.OrderService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Order")
+@Tag(name = "Order Controller")
 @SecurityRequirement(name = "BEARER_TOKEN")
 @RequestMapping("/api/orders")
 public class OrderController {
