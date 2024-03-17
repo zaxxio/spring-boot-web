@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  # Zookeeper Configuration
+
   zookeeper:
     container_name: zookeeper
     restart: always
@@ -10,82 +10,42 @@ services:
       ZOOKEEPER_SERVER_ID: 1
     ports:
       - "2181:2181"
-    #    volumes:
-    #      - ./data/zookeeper:/var/lib/zookeeper/data
-    #      - ./data/zookeeper_log:/var/lib/zookeeper/log
     networks:
       - cloudNetwork
-  # Kafka Broker 1
+
   kafka-1:
-    container_name: kafka1
+    container_name: kafka-1
     restart: always
     image: confluentinc/cp-kafka:latest
     ports:
       - "9092:9092"
       - "29092:29092"
     environment:
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_BROKER_ID: 1
-    #    volumes:
-    #      - ./data/kafka1:/var/lib/kafka/data
     depends_on:
       - zookeeper
     networks:
       - cloudNetwork
 
-  # Kafka Broker 2
-  kafka-2:
-    container_name: kafka2
+  schema-registry:
+    container_name: schema-registry
     restart: always
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-schema-registry:latest
     ports:
-      - "9093:9093"
-      - "29093:29093"
+      - "8081:8081"
     environment:
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:19093,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093,DOCKER://host.docker.internal:29093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-      KAFKA_BROKER_ID: 2
-    #    volumes:
-    #      - ./data/kafka2:/var/lib/kafka/data
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka-1:19092"
     depends_on:
       - zookeeper
-    networks:
-      - cloudNetwork
-  # Kafka Broker 3
-  kafka-3:
-    container_name: kafka3
-    restart: always
-    image: confluentinc/cp-kafka:latest
-    ports:
-      - "9094:9094"
-      - "29094:29094"
-    environment:
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:19094,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094,DOCKER://host.docker.internal:29094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      #      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-      KAFKA_BROKER_ID: 3
-    #    volumes:
-    #      - ./data/kafka3:/var/lib/kafka/data
-    depends_on:
-      - zookeeper
+      - kafka-1
     networks:
       - cloudNetwork
 
@@ -98,15 +58,17 @@ services:
     depends_on:
       - zookeeper
       - kafka-1
-      - kafka-2
-      - kafka-3
+    #      - kafka-2
+    #      - kafka-3
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka-1:19092,kafka-2:19093,kafka-3:19094'
+      KAFKA_CLUSTERS_0_NAME: Development
+      #KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka-1:19092,kafka-2:19093,kafka-3:19094'
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 'kafka-1:19092'
       DYNAMIC_CONFIG_ENABLED: 'true'
       AUTH_TYPE: "LOGIN_FORM"
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: pass
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: "http://schema-registry:8081"
     networks:
       - cloudNetwork
 
@@ -130,26 +92,37 @@ services:
       - POSTGRESQL_DATABASE=${DB_NAME}
       - ALLOW_EMPTY_PASSWORD=yes
 
-  # Postgres Slave
-  postgresql-slave:
-    image: bitnami/postgresql
-    restart: always
-    ports:
-      - '5432'
-    depends_on:
-      - postgresql-master
-    environment:
-      - POSTGRESQL_PASSWORD=password
-      - POSTGRESQL_MASTER_HOST=postgresql-master
-      - POSTGRESQL_PGAUDIT_LOG=READ
-      - POSTGRESQL_LOG_HOSTNAME=true
-      - POSTGRESQL_REPLICATION_MODE=slave
-      - POSTGRESQL_REPLICATION_USER=repl_user
-      - POSTGRESQL_REPLICATION_PASSWORD=repl_user
-      - POSTGRESQL_MASTER_PORT_NUMBER=5432
-      - ALLOW_EMPTY_PASSWORD=yes
+  #  # Postgres Slave
+  #  postgresql-slave:
+  #    image: bitnami/postgresql
+  #    restart: always
+  #    ports:
+  #      - '5432'
+  #    depends_on:
+  #      - postgresql-master
+  #    environment:
+  #      - POSTGRESQL_PASSWORD=password
+  #      - POSTGRESQL_MASTER_HOST=postgresql-master
+  #      - POSTGRESQL_PGAUDIT_LOG=READ
+  #      - POSTGRESQL_LOG_HOSTNAME=true
+  #      - POSTGRESQL_REPLICATION_MODE=slave
+  #      - POSTGRESQL_REPLICATION_USER=repl_user
+  #      - POSTGRESQL_REPLICATION_PASSWORD=repl_user
+  #      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+  #      - ALLOW_EMPTY_PASSWORD=yes
   #    volumes:
   #      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+
   mongodb:
     image: mongo:latest
     ports:
@@ -164,7 +137,7 @@ services:
     image: mongo-express:latest
     restart: always
     ports:
-      - "8081:8081"
+      - "8086:8081"
     environment:
       - ME_CONFIG_BASICAUTH_USERNAME=username
       - ME_CONFIG_BASICAUTH_PASSWORD=password

@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "SensorEventAvro",
+  "namespace": "org.wsd.app.avro",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "x",
+      "type": "double"
+    },
+    {
+      "name": "y",
+      "type": "double"
+    }
+  ]
+}

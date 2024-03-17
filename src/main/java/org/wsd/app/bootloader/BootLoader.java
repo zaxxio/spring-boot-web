@@ -27,8 +27,11 @@ import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.wsd.app.avro.SensorEventAvro;
+import org.wsd.app.config.TopicConfiguration;
 import org.wsd.app.domain.PhotoEntity;
 import org.wsd.app.mongo.Address;
 import org.wsd.app.mongo.Gender;
@@ -39,6 +42,8 @@ import org.wsd.app.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
@@ -46,6 +51,8 @@ import java.util.stream.Stream;
 public class BootLoader implements CommandLineRunner {
     private final PhotoRepository photoRepository;
     private final PersonRepository personRepository;
+
+    private final KafkaTemplate<UUID, SensorEventAvro> sensorEventAvroKafkaTemplate;
 
     @Override
     @Transactional
@@ -64,6 +71,15 @@ public class BootLoader implements CommandLineRunner {
         address.setName("Mirpur");
         person.setAddress(address);
         person.setGender(Gender.MALE);
+
+        SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setX(1)
+                .setY(Math.random())
+                .build();
+
+        sensorEventAvroKafkaTemplate.send(TopicConfiguration.SENSOR, UUID.randomUUID(), eventAvro);
+        System.out.println("Okay");
 
         // personRepository.save(person);
 

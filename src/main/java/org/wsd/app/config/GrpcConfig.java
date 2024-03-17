@@ -45,7 +45,6 @@ import org.wsd.app.grpc.interceptor.GrpcClientInterceptor;
 @RequiredArgsConstructor
 public class GrpcConfig {
 
-
     private final ErrorHandlingClientInterceptor errorHandlingClientInterceptor;
     private final GrpcClientInterceptor grpcClientInterceptor;
 

@@ -23,7 +23,9 @@
 package org.wsd.app.messaging.subs;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.NetworkClient;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -38,6 +40,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.invocation.MethodArgumentResolutionException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
+import org.wsd.app.avro.SensorEventAvro;
 import org.wsd.app.config.TopicConfiguration;
 import org.wsd.app.event.SensorEvent;
 
@@ -56,22 +59,18 @@ public class ConsumerService {
             backoff = @Backoff(delay = 10, multiplier = 1.5, maxDelay = 2000)
     )
     @KafkaListener(topics = TopicConfiguration.SENSOR, groupId = "sensor-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumerGroup1(@Payload SensorEvent sensorEvent, Acknowledgment acknowledgment) {
-        log.info(sensorEvent);
-        if (sensorEvent.getX() == 50) {
-            throw new RuntimeException("Expected.");
-        }
-        acknowledgment.acknowledge();
+    public void consumerGroup1(@Payload GenericRecord record) {
+        log.info("Consumed : " + record);
     }
 
 
     @DltHandler
-    public void processMessage(SensorEvent message) {
-        log.error("DltHandler processMessage = {}", message);
+    public void processMessage(GenericRecord genericRecord) {
+        log.error("DltHandler processMessage = {}", genericRecord);
     }
 
     //@KafkaListener(topicPartitions = @TopicPartition(topic = "sensor", partitions = {"1"}), groupId = "sensor-group", clientIdPrefix = "cg2", concurrency = "5", errorHandler = "kafkaErrorHandler")
-    public void consumerGroup2(List<SensorEvent> sensorEvent, Acknowledgment acknowledgment) {
+    public void consumerGroup2(List<SensorEventAvro> sensorEvent, Acknowledgment acknowledgment) {
         log.info(sensorEvent);
         acknowledgment.acknowledge();
     }

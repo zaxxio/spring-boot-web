@@ -22,6 +22,8 @@
 
 package org.wsd.app.config;
 
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -60,31 +62,14 @@ import java.util.UUID;
 @Log4j2
 @EnableKafka
 @Configuration
-@EnableKafkaStreams
 @EnableKafkaRetryTopic
 public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Bean(name = KafkaStreamsDefaultConfiguration.DEFAULT_STREAMS_CONFIG_BEAN_NAME)
-    public KafkaStreamsConfiguration kafkaStreamsConfiguration() {
-        final Map<String, Object> props = new HashMap<>();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "spring-boot-app");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.UUID().getClass().getName());
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, JsonSerde.class.getName());
-        // props.put(StreamsConfig.STATE_DIR_CONFIG, "/to/state-store");
-        props.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE_V2);
-        props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 100);
-        props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 10 * 1024 * 1024L); // 10MB
-        props.put(StreamsConfig.producerPrefix(ProducerConfig.BUFFER_MEMORY_CONFIG), 32 * 1024 * 1024L); // 32MB
-        props.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 4); // Adjust based on your CPU cores
-        return new KafkaStreamsConfiguration(props);
-    }
-
     @Bean
-    public KafkaTemplate<UUID, Object> kafkaTemplate() {
+    public KafkaTemplate<UUID, ?> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
@@ -93,8 +78,8 @@ public class KafkaConfig {
         final Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         // Correcting the serializer for value to JsonSerializer for consistency and correctness
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, UUIDSerializer.class.getName());
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class.getName());
         configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         configProps.put(ProducerConfig.ACKS_CONFIG, "all");
         configProps.put(ProducerConfig.RETRIES_CONFIG, 10);
@@ -114,6 +99,7 @@ public class KafkaConfig {
         // Monitoring and management
         configProps.put(ProducerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG, 30000);
         configProps.put(ProducerConfig.METRICS_NUM_SAMPLES_CONFIG, 2);
+        configProps.put("schema.registry.url", "http://localhost:8081");
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
@@ -136,11 +122,11 @@ public class KafkaConfig {
         final Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
-        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class.getName());
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class.getName());
-        // Specify the actual deserializer classes as properties of ErrorHandlingDeserializer
-        configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, UUIDDeserializer.class.getName());
-        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class.getName());
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
+//        // Specify the actual deserializer classes as properties of ErrorHandlingDeserializer
+//        configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, UUIDDeserializer.class.getName());
+//        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer.class.getName());
 
         // Trusted package
         configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "org.wsd.app.event");
@@ -164,6 +150,9 @@ public class KafkaConfig {
         configProps.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "300000");
         configProps.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, "305000");
         configProps.put(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "60000");
+
+        configProps.put("schema.registry.url", "http://localhost:8081");
+        configProps.put("specific.avro.read", "true");
         return new DefaultKafkaConsumerFactory<>(configProps);
     }
 

@@ -38,7 +38,7 @@ public class RequestAndResponseInterceptor implements HandlerInterceptor {
         // Log incoming request and capture start time
         long startTime = System.currentTimeMillis();
         request.setAttribute(START_TIME, startTime);
-        // log.info("Incoming request to {}", request.getRequestURI());
+        log.info("Incoming request to {}", request.getRequestURI());
         return true;
     }
 
