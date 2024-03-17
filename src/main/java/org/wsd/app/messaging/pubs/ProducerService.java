@@ -35,7 +35,7 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
-import org.wsd.app.avro.SensorEventAvro;
+import org.wsd.app.event.SensorEventAvro;
 import org.wsd.app.config.TopicConfiguration;
 import org.wsd.app.repository.UserRepository;
 
@@ -48,7 +48,6 @@ import java.util.concurrent.CompletableFuture;
 public class ProducerService {
     private final UserRepository userRepository;
 
-
     private final KafkaTemplate<UUID, SensorEventAvro> sensorEventAvroKafkaTemplate;
 
     @Bean
@@ -56,7 +55,7 @@ public class ProducerService {
         return args -> {
             for (int i = 0; i < 10; i++) {
                 try {
-                    producerService.process(i);
+                    // producerService.process(i);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -66,19 +65,18 @@ public class ProducerService {
 
     @Transactional(value = "transactionManager", rollbackFor = Exception.class)
     public void process(int i) throws TransactionException {
-        final SensorEventAvro sensorEvent = new SensorEventAvro();
-        sensorEvent.setX(i);
-        sensorEvent.setY(Math.random());
+
 
         SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
                 .setId(UUID.randomUUID().toString())
                 .setX(1)
-                .setY(Math.random())
+                .setZ(Math.random())
                 .build();
 
         final Message<SensorEventAvro> message = MessageBuilder
                 .withPayload(eventAvro)
                 .setHeader(KafkaHeaders.KEY, UUID.randomUUID())
+                .setHeader("schema.version","V2")
                 .setHeader(KafkaHeaders.TOPIC, TopicConfiguration.SENSOR)
                 .setHeader(KafkaHeaders.TIMESTAMP, System.currentTimeMillis())
                 .build();

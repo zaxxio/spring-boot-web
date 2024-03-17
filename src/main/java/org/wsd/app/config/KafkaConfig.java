@@ -22,7 +22,10 @@
 
 package org.wsd.app.config;
 
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -54,6 +57,7 @@ import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -117,16 +121,26 @@ public class KafkaConfig {
         return retryTemplate;
     }
 
+
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         final Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, UUIDDeserializer.class.getName());
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class.getName());
-//        // Specify the actual deserializer classes as properties of ErrorHandlingDeserializer
-//        configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, UUIDDeserializer.class.getName());
-//        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer.class.getName());
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class.getName());
+        configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, UUIDDeserializer.class.getName());
+        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer.class.getName());
+
+        // Configure the trusted package for Avro deserialization
+        configProps.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
+        configProps.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+
+        configProps.put("specific.avro.reader.schema.trusted", "true");
+        configProps.put("schema.registry.compatibility.level", "FULL_TRANSITIVE");
+
+        // Specify the schema registry URL
+
 
         // Trusted package
         configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "org.wsd.app.event");
@@ -150,9 +164,6 @@ public class KafkaConfig {
         configProps.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, "300000");
         configProps.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, "305000");
         configProps.put(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "60000");
-
-        configProps.put("schema.registry.url", "http://localhost:8081");
-        configProps.put("specific.avro.read", "true");
         return new DefaultKafkaConsumerFactory<>(configProps);
     }
 

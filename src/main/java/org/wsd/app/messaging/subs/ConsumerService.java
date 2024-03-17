@@ -24,31 +24,19 @@ package org.wsd.app.messaging.subs;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.clients.NetworkClient;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
-import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.kafka.support.converter.ConversionException;
-import org.springframework.kafka.support.serializer.DeserializationException;
-import org.springframework.messaging.converter.MessageConversionException;
-import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.invocation.MethodArgumentResolutionException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
-import org.wsd.app.avro.SensorEventAvro;
+import org.wsd.app.event.SensorEventAvro;
 import org.wsd.app.config.TopicConfiguration;
-import org.wsd.app.event.SensorEvent;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Log4j2
 @Service
@@ -59,8 +47,8 @@ public class ConsumerService {
             backoff = @Backoff(delay = 10, multiplier = 1.5, maxDelay = 2000)
     )
     @KafkaListener(topics = TopicConfiguration.SENSOR, groupId = "sensor-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumerGroup1(@Payload GenericRecord record) {
-        log.info("Consumed : " + record);
+    public void consumerGroup1(@Payload ConsumerRecord<UUID, SensorEventAvro> record) {
+        log.info("Consumed : " + record.value());
     }
 
 

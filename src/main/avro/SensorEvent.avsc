@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "SensorEventAvro",
-  "namespace": "org.wsd.app.avro",
+  "namespace": "org.wsd.app.event",
   "fields": [
     {
       "name": "id",
@@ -12,8 +12,9 @@
       "type": "double"
     },
     {
-      "name": "y",
-      "type": "double"
+      "name": "z",
+      "type": "double",
+      "default": "-1"
     }
   ]
 }
