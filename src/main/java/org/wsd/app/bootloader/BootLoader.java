@@ -52,7 +52,7 @@ public class BootLoader implements CommandLineRunner {
     private final PhotoRepository photoRepository;
     private final PersonRepository personRepository;
 
-    private final KafkaTemplate<UUID, SensorEventAvro> sensorEventAvroKafkaTemplate;
+
 
     @Override
     @Transactional
@@ -78,8 +78,6 @@ public class BootLoader implements CommandLineRunner {
                 .setY(Math.random())
                 .build();
 
-        sensorEventAvroKafkaTemplate.send(TopicConfiguration.SENSOR, UUID.randomUUID(), eventAvro);
-        System.out.println("Okay");
 
         // personRepository.save(person);
 

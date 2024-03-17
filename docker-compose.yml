@@ -1,6 +1,5 @@
 version: '3.8'
 services:
-
   zookeeper:
     container_name: zookeeper
     restart: always

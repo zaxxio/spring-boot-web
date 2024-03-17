@@ -27,7 +27,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
@@ -43,17 +46,44 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @RequiredArgsConstructor
 public class ProducerService {
-    private final KafkaTemplate<UUID, SensorEventAvro> kafkaTemplate;
+    private final UserRepository userRepository;
 
 
-//    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
+    private final KafkaTemplate<UUID, SensorEventAvro> sensorEventAvroKafkaTemplate;
+
+    @Bean
+    public CommandLineRunner commandLineRunner(ProducerService producerService) {
+        return args -> {
+            for (int i = 0; i < 10; i++) {
+                try {
+                    producerService.process(i);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        };
+    }
+
+    @Transactional(value = "transactionManager", rollbackFor = Exception.class)
     public void process(int i) throws TransactionException {
         final SensorEventAvro sensorEvent = new SensorEventAvro();
         sensorEvent.setX(i);
         sensorEvent.setY(Math.random());
 
+        SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setX(1)
+                .setY(Math.random())
+                .build();
 
-        CompletableFuture<? extends SendResult<UUID, ?>> future = kafkaTemplate.send(TopicConfiguration.SENSOR, UUID.randomUUID(), sensorEvent);
+        final Message<SensorEventAvro> message = MessageBuilder
+                .withPayload(eventAvro)
+                .setHeader(KafkaHeaders.KEY, UUID.randomUUID())
+                .setHeader(KafkaHeaders.TOPIC, TopicConfiguration.SENSOR)
+                .setHeader(KafkaHeaders.TIMESTAMP, System.currentTimeMillis())
+                .build();
+
+        CompletableFuture<? extends SendResult<UUID, ?>> future = sensorEventAvroKafkaTemplate.send(message);
         future.thenAccept(uuidSendResult -> {
             log.info("Message sent successfully.");
         }).exceptionally(exception -> {
