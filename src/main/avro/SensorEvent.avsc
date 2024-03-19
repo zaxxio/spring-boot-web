@@ -12,6 +12,11 @@
       "type": "double"
     },
     {
+      "name": "y",
+      "type": "double",
+      "default": "-1",
+    },
+    {
       "name": "z",
       "type": "double",
       "default": "-1"

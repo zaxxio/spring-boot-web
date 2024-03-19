@@ -3,6 +3,8 @@ spring:
     active: ${SPRING_PROFILE_ACTIVE:dev}
   data:
     mongodb:
+      repositories:
+        type: imperative
       authentication-database: admin
       auto-index-creation: true
       database: mongodb
@@ -24,3 +26,6 @@ grpc:
 
 
 
+logging:
+  level:
+    io.confluent.kafka.serializers: OFF

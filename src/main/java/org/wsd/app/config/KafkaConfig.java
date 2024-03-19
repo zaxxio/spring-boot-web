@@ -27,6 +27,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -103,7 +104,7 @@ public class KafkaConfig {
         // Monitoring and management
         configProps.put(ProducerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG, 30000);
         configProps.put(ProducerConfig.METRICS_NUM_SAMPLES_CONFIG, 2);
-        configProps.put("schema.registry.url", "http://localhost:8081");
+        configProps.put(KafkaAvroSerializerConfig.SCHEMA_REGISTRY_URL_CONFIG, "http://localhost:8081");
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
