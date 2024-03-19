@@ -1,5 +1,6 @@
 package org.wsd.app.controller.handler;
 
+import io.grpc.StatusRuntimeException;
 import org.apache.kafka.common.KafkaException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,11 +46,10 @@ public class HandlerFunc {
         return new ResponseEntity<>(payload, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({DataAccessException.class, CannotCreateTransactionException.class, KafkaException.class})
+    @ExceptionHandler({DataAccessException.class, CannotCreateTransactionException.class, KafkaException.class, StatusRuntimeException.class})
     public ResponseEntity<Payload<?>> handleDatabaseException(Exception e) {
-        log.error("Database access error: ", e);
         final Payload<?> responsePayload = new Payload.Builder<>()
-                .message("Service temporarily unavailable due to a database issue. Please try again later." + e.getMessage())
+                .message("Service temporarily unavailable due to a issue. Please try again later." + e.getMessage())
                 .build();
         return new ResponseEntity<>(responsePayload, HttpStatus.SERVICE_UNAVAILABLE);
     }

@@ -47,8 +47,9 @@ public class ConsumerService {
             backoff = @Backoff(delay = 10, multiplier = 1.5, maxDelay = 2000)
     )
     @KafkaListener(topics = TopicConfiguration.SENSOR, groupId = "sensor-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumerGroup1(@Payload ConsumerRecord<UUID, SensorEventAvro> record) {
+    public void consumerGroup1(@Payload ConsumerRecord<UUID, SensorEventAvro> record, Acknowledgment acknowledgment) {
         log.info("Consumed : " + record.value());
+        acknowledgment.acknowledge();
     }
 
 

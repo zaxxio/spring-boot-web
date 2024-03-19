@@ -6,21 +6,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wsd.app.grpc.OrderService;
+import org.wsd.app.grpc.PingService;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Order Controller")
+@Tag(name = "Ping Pong Controller")
 @SecurityRequirement(name = "BEARER_TOKEN")
-@RequestMapping("/api/orders")
-public class OrderController {
-    private final OrderService orderService;
-    @GetMapping("/{orderId}")
+@RequestMapping("/api/ping")
+public class PingController {
+    private final PingService pingService;
+
+    @GetMapping("/{pingId}")
     @ResponseStatus(HttpStatus.FOUND)
-    public ResponseEntity<?> getOrderById(@PathVariable("orderId") int orderId) {
-        orderService.getOrderBy(orderId);
-        // orderService.getOrderById(orderId);
+    public ResponseEntity<?> getOrderById(@PathVariable("pingId") int pingId) {
         return ResponseEntity.
-                ok("Success");
+                ok(pingService.ping());
     }
 }

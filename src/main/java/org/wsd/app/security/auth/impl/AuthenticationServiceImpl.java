@@ -74,6 +74,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserEntity user = userRepository.findUserEntityByUsername(signInRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(signInRequest.getUsername() + " not found in the database."));
+
+        if (user.is2FAEnabled() && signInRequest.getCode() == null) {
+            throw new TwoFactorFailedException("Two Factor Authentication code is required.");
+        }
+
         final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 signInRequest.getUsername(),
                 signInRequest.getPassword(),

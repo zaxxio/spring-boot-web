@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.wsd.app.proto";
+
+message PingRequest{
+  string message = 1;
+}
+
+message PingResponse{
+  string message = 2;
+}
+
+
+service PingPongService{
+  rpc pingPong(PingRequest) returns(PingResponse);
+}
+

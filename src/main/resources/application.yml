@@ -18,12 +18,19 @@ spring:
 
 grpc:
   client:
-    grpc-client:
+    ping-pong-client:
       address: 'static://127.0.0.1:9090'
       enableKeepAlive: true
       keepAliveWithoutCalls: true
       negotiationType: plaintext
 
+resilience4j.retry:
+  instances:
+    pingRetry:
+      max-attempts: 5
+      waitDuration: 1000ms
+      retryExceptions:
+        - io.grpc.StatusRuntimeException
 
 
 logging:

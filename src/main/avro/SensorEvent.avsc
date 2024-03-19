@@ -14,7 +14,7 @@
     {
       "name": "y",
       "type": "double",
-      "default": "-1",
+      "default": "-1"
     },
     {
       "name": "z",

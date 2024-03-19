@@ -39,6 +39,7 @@ import org.wsd.app.event.SensorEventAvro;
 import org.wsd.app.config.TopicConfiguration;
 import org.wsd.app.repository.UserRepository;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -55,7 +56,7 @@ public class ProducerService {
         return args -> {
             for (int i = 0; i < 10; i++) {
                 try {
-                    // producerService.process(i);
+                    producerService.process(i);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -69,7 +70,8 @@ public class ProducerService {
 
         SensorEventAvro eventAvro = SensorEventAvro.newBuilder()
                 .setId(UUID.randomUUID().toString())
-                .setX(1)
+                .setX(Math.random())
+                .setY(Math.random())
                 .setZ(Math.random())
                 .build();
 

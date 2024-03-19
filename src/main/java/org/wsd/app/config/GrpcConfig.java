@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.wsd.app.grpc.interceptor.ErrorHandlingClientInterceptor;
-import org.wsd.app.grpc.interceptor.GrpcClientInterceptor;
 
 @Configuration
 @ImportAutoConfiguration({
@@ -45,17 +44,17 @@ import org.wsd.app.grpc.interceptor.GrpcClientInterceptor;
 @RequiredArgsConstructor
 public class GrpcConfig {
 
-    private final ErrorHandlingClientInterceptor errorHandlingClientInterceptor;
-    private final GrpcClientInterceptor grpcClientInterceptor;
-
-    @Bean
-    public GrpcChannelConfigurer clientInterceptorConfigurer() {
-        return (channelBuilder, name) -> {
-            if (channelBuilder != null) {
-                channelBuilder.intercept(errorHandlingClientInterceptor);
-                channelBuilder.intercept(grpcClientInterceptor);
-            }
-        };
-    }
+//    private final ErrorHandlingClientInterceptor errorHandlingClientInterceptor;
+//    private final GrpcClientInterceptor grpcClientInterceptor;
+//
+//    @Bean
+//    public GrpcChannelConfigurer clientInterceptorConfigurer() {
+//        return (channelBuilder, name) -> {
+//            if (channelBuilder != null) {
+//                channelBuilder.intercept(errorHandlingClientInterceptor);
+//                channelBuilder.intercept(grpcClientInterceptor);
+//            }
+//        };
+//    }
 
 }
