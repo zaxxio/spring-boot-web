@@ -44,9 +44,6 @@ public class BootLoader implements CommandLineRunner {
     private final PhotoRepository photoRepository;
     private final PersonRepository personRepository;
     private final ConferenceElasticRepository conferenceElasticRepository;
-
-
-
     @Override
     @Transactional
     public void run(String... args) throws Exception {

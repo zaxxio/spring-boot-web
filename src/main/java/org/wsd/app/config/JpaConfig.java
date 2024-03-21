@@ -18,9 +18,6 @@ import java.util.Optional;
 @EntityScan(basePackages = "org.wsd.app.domain")
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class JpaConfig {
-    public JpaConfig() {
-    }
-
     @Bean
     public AuditorAware<String> auditorAware() {
         return () -> {
@@ -32,6 +29,4 @@ public class JpaConfig {
             return Optional.of(authentication.getName());
         };
     }
-
-
 }

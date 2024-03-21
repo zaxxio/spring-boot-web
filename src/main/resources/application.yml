@@ -16,6 +16,11 @@ spring:
       #        bucket: storagedb
       #        database: storage
 
+
+server:
+  http2:
+    enabled: true
+
 grpc:
   client:
     ping-pong-client:

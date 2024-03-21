@@ -15,7 +15,6 @@ import org.wsd.app.grpc.PingService;
 @RequestMapping("/api/ping")
 public class PingController {
     private final PingService pingService;
-
     @GetMapping("/{pingId}")
     @ResponseStatus(HttpStatus.FOUND)
     public ResponseEntity<?> getOrderById(@PathVariable("pingId") int pingId) {
