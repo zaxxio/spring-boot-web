@@ -42,13 +42,13 @@ import org.wsd.app.repository.UserRepository;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class ProducerService {
     private final UserRepository userRepository;
-
     private final KafkaTemplate<UUID, SensorEventAvro> sensorEventAvroKafkaTemplate;
 
     @Bean
@@ -85,7 +85,11 @@ public class ProducerService {
 
         CompletableFuture<? extends SendResult<UUID, ?>> future = sensorEventAvroKafkaTemplate.send(message);
         future.thenAccept(uuidSendResult -> {
-            log.info("Message sent successfully.");
+            try {
+                log.info("Produced : " + future.get().getProducerRecord().value());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
         }).exceptionally(exception -> {
             log.error(exception.getMessage());
             return null;

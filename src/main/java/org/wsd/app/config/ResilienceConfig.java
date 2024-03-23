@@ -46,7 +46,7 @@ public class ResilienceConfig {
 
     @Bean
     public Bulkhead photoServiceApiBulkhead() {
-        BulkheadConfig config = BulkheadConfig.custom()
+        final BulkheadConfig config = BulkheadConfig.custom()
                 .maxConcurrentCalls(5)
                 .maxWaitDuration(Duration.ofMillis(500))
                 .build();

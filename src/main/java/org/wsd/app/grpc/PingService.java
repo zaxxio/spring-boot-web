@@ -19,14 +19,15 @@ public class PingService {
 
     @Retry(name = "pingRetry")
     public String ping() {
-        PingRequest request = PingRequest
+        final PingRequest request = PingRequest
                 .newBuilder()
                 .setMessage("Ping")
                 .build();
+
         Instant start = Instant.now();
         PingResponse pingResponse = null;
         for (int i = 0; i < 10000; i++) {
-             pingResponse = serviceBlockingStub.pingPong(request);
+            pingResponse = serviceBlockingStub.pingPong(request);
         }
         Instant end = Instant.now();
         log.info("TIme Taken " + Duration.between(start, end).getSeconds());

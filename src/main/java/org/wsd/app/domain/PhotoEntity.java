@@ -34,7 +34,7 @@ import java.io.Serializable;
 @Data
 @Cacheable
 @EqualsAndHashCode(callSuper = true)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "photosCache")
 public class PhotoEntity extends AbstractAuditableEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

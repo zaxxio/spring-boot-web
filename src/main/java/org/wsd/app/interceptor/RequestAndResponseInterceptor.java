@@ -32,7 +32,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class RequestAndResponseInterceptor implements HandlerInterceptor {
     private static final String START_TIME = "startTime";
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // Log incoming request and capture start time
@@ -41,7 +40,6 @@ public class RequestAndResponseInterceptor implements HandlerInterceptor {
         log.info("Incoming request to {}", request.getRequestURI());
         return true;
     }
-
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         // Calculate and log the time taken to complete the request

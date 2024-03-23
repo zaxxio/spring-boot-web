@@ -56,7 +56,7 @@ import java.util.UUID;
 @EntityListeners(AuditEntityListener.class)
 @JsonPropertyOrder(alphabetic = true)
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "usersCache")
 public class UserEntity extends AbstractAuditableEntity implements UserDetails {
 
     @Id
