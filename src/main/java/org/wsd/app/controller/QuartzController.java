@@ -33,6 +33,21 @@ public class QuartzController {
         return quartzSchedulerService.getRunningTimers();
     }
 
+    @DeleteMapping(path = "/deleteJob")
+    public boolean deleteJob(@RequestParam("jobId") String jobId) {
+        return quartzSchedulerService.deleteJob(jobId);
+    }
+
+    @PostMapping(path = "/pauseJob")
+    public boolean pauseJob(@RequestParam("jobId") String jobId) {
+        return quartzSchedulerService.pauseJob(jobId);
+    }
+
+    @PostMapping(path = "/resumeJob")
+    public boolean resumeJob(@RequestParam("jobId") String jobId) {
+        return quartzSchedulerService.resumeJob(jobId);
+    }
+
     @GetMapping(path = "/getRunningTimer")
     public JobTimer getRunningTimer(@RequestParam("timerId") String timerId, @RequestParam("group") String group) {
         return quartzSchedulerService.getRunningTimer(timerId, group);

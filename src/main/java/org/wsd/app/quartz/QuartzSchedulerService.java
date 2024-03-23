@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,9 @@ public class QuartzSchedulerService {
     public void scheduleJob(Class<? extends Job> clazz, JobTimer jobTimer) {
         final JobDetail job = buildJob(clazz, jobTimer);
         final Trigger trigger = buildTrigger(jobTimer);
-
         try {
             scheduler.scheduleJob(job, trigger);
+            log.info("Quartz job has been scheduled with id : " + jobTimer.getJobId());
         } catch (SchedulerException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -53,10 +54,11 @@ public class QuartzSchedulerService {
 
 
     public void updateTimer(String timerId, String group, JobTimer jobTimer) {
-        final JobKey jobKey = new JobKey(timerId, group);
+        final JobKey jobKey = new JobKey(timerId);
         try {
             final JobDetail job = scheduler.getJobDetail(jobKey);
             job.getJobDataMap().put(jobKey.getName(), jobTimer);
+            scheduler.addJob(job, true, true);
         } catch (SchedulerException e) {
             log.error(e.getMessage(), e);
         }
@@ -84,21 +86,30 @@ public class QuartzSchedulerService {
     }
 
     private Trigger buildTrigger(JobTimer jobTimer) {
-        SimpleScheduleBuilder builder = SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInMilliseconds(jobTimer.getRepeatIntervalMs());
-
-        if (jobTimer.isRunForever()) {
-            builder = builder.repeatForever();
+        if (StringUtils.isNotEmpty(jobTimer.getCronExpression())) {
+            return TriggerBuilder.newTrigger()
+                    .withIdentity(jobTimer.getJobId())
+                    .withSchedule(CronScheduleBuilder.cronSchedule(jobTimer.getCronExpression()))
+                    .startAt(new Date(System.currentTimeMillis() + jobTimer.getInitialOffsetMs()))
+                    .build();
         } else {
-            builder = builder.withRepeatCount(jobTimer.getTotalFireCount() - 1);
-        }
+            SimpleScheduleBuilder builder = SimpleScheduleBuilder.simpleSchedule()
+                    .withIntervalInMilliseconds(jobTimer.getRepeatIntervalMs());
 
-        return TriggerBuilder
-                .newTrigger()
-                .withIdentity(jobTimer.getJobId(), jobTimer.getGroupName())
-                .withSchedule(builder)
-                .startAt(new Date(System.currentTimeMillis() + jobTimer.getInitialOffsetMs()))
-                .build();
+            if (jobTimer.isRunForever()) {
+                builder = builder.repeatForever();
+            } else {
+                builder = builder.withRepeatCount(jobTimer.getTotalFireCount() - 1);
+            }
+
+            return TriggerBuilder
+                    .newTrigger()
+                    .withIdentity(jobTimer.getJobId())
+                    // .withIdentity(jobTimer.getJobId(), jobTimer.getGroupName())
+                    .withSchedule(builder)
+                    .startAt(new Date(System.currentTimeMillis() + jobTimer.getInitialOffsetMs()))
+                    .build();
+        }
     }
 
     private JobDetail buildJob(Class<? extends Job> clazz, JobTimer jobTimer) {
@@ -106,7 +117,8 @@ public class QuartzSchedulerService {
         dataMap.put(jobTimer.getJobId(), jobTimer);
         return JobBuilder
                 .newJob(clazz)
-                .withIdentity(jobTimer.getJobId(), jobTimer.getGroupName())
+                .withIdentity(jobTimer.getJobId())
+                //.withIdentity(jobTimer.getJobId(), jobTimer.getGroupName())
                 .setJobData(dataMap)
                 .build();
     }
@@ -121,4 +133,33 @@ public class QuartzSchedulerService {
         }
     }
 
+    public boolean deleteJob(String jobId) {
+        try {
+            boolean deletedJob = scheduler.deleteJob(new JobKey(jobId));
+            log.info("Quartz job has been deleted with id : " + jobId);
+            return deletedJob;
+        } catch (SchedulerException e) {
+            return false;
+        }
+    }
+
+    public boolean pauseJob(String jobId) {
+        try {
+            scheduler.pauseJob(new JobKey(jobId));
+            log.info("Quartz job has been pause with id : " + jobId);
+            return true;
+        } catch (SchedulerException e) {
+            return false;
+        }
+    }
+
+    public boolean resumeJob(String jobId) {
+        try {
+            log.info("Quartz job has been resumed with id : " + jobId);
+            scheduler.resumeJob(new JobKey(jobId));
+            return true;
+        } catch (SchedulerException e) {
+            return false;
+        }
+    }
 }

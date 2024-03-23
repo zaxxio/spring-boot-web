@@ -1,6 +1,7 @@
 package org.wsd.app.quartz.listener;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
 import org.wsd.app.quartz.JobTimer;
@@ -23,7 +24,9 @@ public class SimpleTriggerListener implements TriggerListener {
         JobTimer jobTimer = (JobTimer) dataMap.get(timerId);
         if (!jobTimer.isRunForever()) {
             int remainingCount = jobTimer.getRemainingCount();
-            jobTimer.setRemainingCount(remainingCount - 1);
+            if (!StringUtils.isNotEmpty(jobTimer.getCronExpression())) {
+                jobTimer.setRemainingCount(remainingCount - 1);
+            }
         }
         this.quartzSchedulerService.updateTimer(timerId, null, jobTimer);
     }
