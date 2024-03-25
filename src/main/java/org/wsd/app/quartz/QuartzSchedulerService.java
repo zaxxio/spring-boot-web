@@ -41,6 +41,31 @@ public class QuartzSchedulerService {
         }
     }
 
+    public boolean startNow(String jobId) {
+        JobKey jobKey = new JobKey(jobId);
+        try {
+            if (!scheduler.checkExists(jobKey)) {
+                log.error("Job with ID {} does not exist", jobId);
+                return false;
+            }
+            JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+
+            Trigger instantTrigger = TriggerBuilder.newTrigger()
+                    .withIdentity(jobId)
+                    .forJob(jobDetail)
+                    .startNow()
+                    .build();
+
+            scheduler.scheduleJob(instantTrigger);
+            log.info("Scheduled job {} to start instantly", jobId);
+            return true;
+        } catch (SchedulerException e) {
+            log.error("Failed to schedule job {} for immediate execution. Error: {}", jobId, e.getMessage(), e);
+            return false;
+        }
+    }
+
+
     public JobTimer getRunningTimer(String timerId, String group) {
         final JobKey jobKey = new JobKey(timerId, group);
         try {

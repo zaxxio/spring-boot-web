@@ -22,8 +22,12 @@
 
 package org.wsd.app.config;
 
+import org.junit.jupiter.api.Order;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 @Configuration
 public class LoadBalancerConfiguration {
+
 }

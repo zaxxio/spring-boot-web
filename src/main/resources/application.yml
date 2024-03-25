@@ -1,6 +1,10 @@
 spring:
   profiles:
     active: ${SPRING_PROFILE_ACTIVE:dev}
+  docker:
+    compose:
+      file: docker-compose.yml
+      enabled: true
   data:
     mongodb:
       repositories:

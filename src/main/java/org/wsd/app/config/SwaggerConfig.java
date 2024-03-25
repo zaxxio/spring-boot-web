@@ -22,6 +22,9 @@
 
 package org.wsd.app.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -31,6 +34,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
+@OpenAPIDefinition(
+        servers = {
+                @Server(url = "https://localhost:8443", description = "Development Server."),
+                @Server(url = "https://avaand.com:443", description = "Production Server.")
+        }
+)
 @PropertySource("classpath:swagger/swagger.properties")
 public class SwaggerConfig {
 

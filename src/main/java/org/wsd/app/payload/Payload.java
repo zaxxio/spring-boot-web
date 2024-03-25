@@ -25,6 +25,7 @@ package org.wsd.app.payload;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Date;
@@ -32,7 +33,7 @@ import java.util.UUID;
 
 @Getter
 @ToString
-public class Payload<T> {
+public class Payload<T> implements Serializable {
 
     private final UUID requestId = UUID.randomUUID();
     private final String message;

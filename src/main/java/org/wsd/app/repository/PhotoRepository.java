@@ -23,8 +23,10 @@
 package org.wsd.app.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.wsd.app.domain.PhotoEntity;
 
+@Repository
 public interface PhotoRepository extends JpaRepository<PhotoEntity, Long> {
 //    @QueryHints(value = {
 //            @QueryHint(name = "org.hibernate.cacheable", value = "true"),

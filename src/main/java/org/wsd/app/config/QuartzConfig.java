@@ -23,12 +23,19 @@
 package org.wsd.app.config;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
 @Log4j2
 @Configuration
 public class QuartzConfig {
+
+    @Bean
+    public DataSourceTransactionManager dataSourceTransactionManager(final DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
+    }
 
 }
