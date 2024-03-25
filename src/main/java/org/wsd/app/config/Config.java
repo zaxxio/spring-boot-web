@@ -26,7 +26,8 @@ public class Config {
     @Bean
     @Primary
     public ApplicationEventMulticaster multicaster(ThreadPoolTaskExecutor executor,
-                                                   @Qualifier("applicationEventListenerErrorHandler") ApplicationListenerErrorHandler errorHandler) {
+                                                   @Qualifier("applicationEventListenerErrorHandler") ApplicationListenerErrorHandler errorHandler
+    ) {
         final SimpleApplicationEventMulticaster multicaster = new SimpleApplicationEventMulticaster();
         multicaster.setTaskExecutor(executor);
         multicaster.setErrorHandler(errorHandler);
