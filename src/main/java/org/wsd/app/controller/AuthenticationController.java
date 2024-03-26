@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wsd.app.config.ResilienceConfig;
+import org.wsd.app.exception.UsernameAlreadyExistsException;
 import org.wsd.app.security.auth.AuthenticationService;
 import org.wsd.app.security.auth.resquest.SignInRequest;
 import org.wsd.app.security.auth.resquest.SignUpRequest;
@@ -48,7 +49,8 @@ public class AuthenticationController {
     )
     @ResponseStatus(HttpStatus.CREATED)
     @RateLimiter(name = ResilienceConfig.AUTH_SERVICE_API)
-    public ResponseEntity<?> signUp(@Valid @RequestBody @Parameter(description = "SignUpRequest model with username, password to register user.") SignUpRequest signUpRequest) {
+    public ResponseEntity<?> signUp(@Valid @RequestBody
+                                        @Parameter(description = "SignUpRequest model with username, password to register user.") SignUpRequest signUpRequest) throws UsernameAlreadyExistsException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authenticationService.signUp(signUpRequest));
     }

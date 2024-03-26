@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.wsd.app.domain.RoleEntity;
 import org.wsd.app.domain.UserEntity;
+import org.wsd.app.exception.UsernameAlreadyExistsException;
 import org.wsd.app.payload.Payload;
 import org.wsd.app.repository.UserRepository;
 import org.wsd.app.security.auth.AuthenticationService;
@@ -125,7 +126,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
     @Override
-    public Payload<SignUpResponse> signUp(@Valid SignUpRequest signUpRequest) {
+    public Payload<SignUpResponse> signUp(@Valid SignUpRequest signUpRequest) throws UsernameAlreadyExistsException {
+
+        if (userRepository.findUserEntityByUsername(signUpRequest.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException("User already exists");
+        }
 
         final UserEntity user = new UserEntity();
         user.setUsername(signUpRequest.getUsername());
@@ -135,6 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         final RoleEntity role = new RoleEntity();
         role.setName("USER");
         user.setRoleEntities(Set.of(role));
+
 
         // saving the data
         UserEntity persistedUser = userRepository.save(user);

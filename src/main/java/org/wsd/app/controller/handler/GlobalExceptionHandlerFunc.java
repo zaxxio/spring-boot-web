@@ -15,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.wsd.app.exception.UsernameAlreadyExistsException;
 import org.wsd.app.payload.Payload;
 import org.wsd.app.security.auth.impl.TwoFactorFailedException;
 
@@ -24,7 +25,7 @@ import java.util.Map;
 import static org.apache.kafka.common.requests.DeleteAclsResponse.log;
 
 @RestControllerAdvice
-public class HandlerFunc {
+public class GlobalExceptionHandlerFunc {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Payload<Map<String, String>>> handleValidationException(MethodArgumentNotValidException exception) {
@@ -60,6 +61,13 @@ public class HandlerFunc {
     public ResponseEntity<String> handleBadJwtException(BadJwtException ex) {
         // Custom error handling logic
         return new ResponseEntity<>("Invalid JWT token: " + ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT) // 409 Conflict
+    public String handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
+        return ex.getMessage();
     }
 
 
