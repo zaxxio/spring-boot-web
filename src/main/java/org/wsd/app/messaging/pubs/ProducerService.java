@@ -72,7 +72,6 @@ public class ProducerService {
                 .setId(UUID.randomUUID().toString())
                 .setX(Math.random())
                 .setY(Math.random())
-                .setZ(Math.random())
                 .build();
 
         final Message<SensorEventAvro> message = MessageBuilder
