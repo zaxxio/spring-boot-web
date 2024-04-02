@@ -14,6 +14,12 @@ public class SampleJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
         JobTimer jobTimer = (JobTimer) dataMap.get("1");
+
+        if (jobTimer.isExpired()) {
+            log.info("Job with id : {} has expired at execution time. Job will not run.", jobTimer.getJobId());
+            return; // Exit the job without performing the task
+        }
+
         log.info("Remaining Job Count : " + jobTimer.getRemainingCount());
     }
 }

@@ -32,6 +32,10 @@ public class QuartzSchedulerService {
     public void scheduleJob(Class<? extends Job> clazz, JobTimer jobTimer) {
         final JobDetail job = buildJob(clazz, jobTimer);
         final Trigger trigger = buildTrigger(jobTimer);
+        if (jobTimer.isExpired()) {
+            log.info("Job with id : {} is expired and will not be scheduled.", jobTimer.getJobId());
+            return; // Skip scheduling the job
+        }
         try {
             scheduler.scheduleJob(job, trigger);
             log.info("Quartz job has been scheduled with id : " + jobTimer.getJobId());

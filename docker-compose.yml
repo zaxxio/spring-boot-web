@@ -125,6 +125,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password
 
   mongodb:
+    container_name: mongodb
     image: mongo:latest
     ports:
       - "27017:27017"
@@ -135,6 +136,7 @@ services:
       - mongo-data:/data/db
 
   mongo-express:
+    container_name: mongo-express
     image: mongo-express:latest
     restart: always
     ports:

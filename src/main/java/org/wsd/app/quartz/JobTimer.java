@@ -16,4 +16,11 @@ public class JobTimer implements Serializable {
     private long repeatIntervalMs;
     private long initialOffsetMs;
     private String callback;
+    public boolean isExpired() {
+        if (runForever) {
+            return false;
+        }
+        long endTime = initialOffsetMs + (repeatIntervalMs * totalFireCount);
+        return System.currentTimeMillis() > endTime;
+    }
 }
