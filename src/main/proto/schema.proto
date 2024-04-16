@@ -15,4 +15,3 @@ message PingResponse{
 service PingPongService{
   rpc pingPong(PingRequest) returns(PingResponse);
 }
-

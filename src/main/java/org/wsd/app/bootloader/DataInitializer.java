@@ -28,8 +28,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wsd.app.domain.PhotoEntity;
-import org.wsd.app.elastic.Conference;
-import org.wsd.app.elastic.ConferenceElasticRepository;
 import org.wsd.app.mongo.Address;
 import org.wsd.app.mongo.Gender;
 import org.wsd.app.mongo.Person;
@@ -44,7 +42,6 @@ import java.util.Date;
 public class DataInitializer implements CommandLineRunner {
     private final PhotoRepository photoRepository;
     private final PersonRepository personRepository;
-    private final ConferenceElasticRepository conferenceElasticRepository;
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -65,13 +62,6 @@ public class DataInitializer implements CommandLineRunner {
 
 
         // personRepository.save(person);
-
-        Conference conference = new Conference();
-        conference.setConferenceName("Partha's Conference");
-        conference.setTimestamp(new Date());
-
-        Conference save = conferenceElasticRepository.save(conference);
-        System.out.println("Saved : " + save);
 
         // quartzSchedulerService.scheduleJob(SampleJob.class, "sampleJob", "group1", "0/10 * * * * ?");
 

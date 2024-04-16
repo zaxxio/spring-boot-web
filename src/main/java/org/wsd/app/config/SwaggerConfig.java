@@ -24,7 +24,6 @@ package org.wsd.app.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -42,6 +41,8 @@ import org.springframework.context.annotation.PropertySource;
 )
 @PropertySource("classpath:swagger/swagger.properties")
 public class SwaggerConfig {
+
+    public static final String BEARER_TOKEN = "BEARER_TOKEN";
 
     @Bean
     public OpenAPI openAPI() {
