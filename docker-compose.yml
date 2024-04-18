@@ -148,6 +148,18 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=password
       - ME_CONFIG_MONGODB_SERVER=mongodb
 
+  axonserver:
+    container_name: axonserver
+    image: axoniq/axonserver:2023.2.3
+    ports:
+      - "8024:8024" # HTTP port
+      - "8124:8124" # gRPC port
+    environment:
+      - AXONIQ_AXONSERVER_DEVMODE_ENABLED=true
+      - AXONIQ_AXONSERVER_NAME=axonserver
+      - AXON_SERVER_HOSTNAME=axonserver
+      - AXON_SERVER_CONTEXT=default
+
 #  elasticsearch:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
 #    container_name: elasticsearch-container

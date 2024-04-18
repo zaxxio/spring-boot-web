@@ -40,19 +40,22 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
+
     private final PhotoRepository photoRepository;
     private final PersonRepository personRepository;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        PhotoEntity photoEntity = new PhotoEntity();
+
+        final PhotoEntity photoEntity = new PhotoEntity();
         photoEntity.setId(1L);
         String name = new Faker().file().fileName();
         photoEntity.setName(name);
         PhotoEntity photo = photoRepository.save(photoEntity);
 
 
-        Person person = new Person();
+        final Person person = new Person();
         person.setUsername("username1");
         person.setPassword("password");
         Address address = new Address();
