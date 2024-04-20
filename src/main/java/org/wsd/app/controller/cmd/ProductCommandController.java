@@ -8,13 +8,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.wsd.app.config.SwaggerConfig;
 import org.wsd.app.eventsourcing.command.CreateProductCommand;
+import org.wsd.app.eventsourcing.command.DeleteProductCommand;
+import org.wsd.app.eventsourcing.command.UpdateProductCommand;
 import org.wsd.app.eventsourcing.payload.ProductRestModel;
 
 import java.util.UUID;
@@ -28,17 +28,52 @@ public class ProductCommandController {
 
     private final CommandGateway commandGateway;
 
+
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createProduct(@RequestBody ProductRestModel productRestModel) {
 
+        UUID randomUUID = UUID.randomUUID();
+
         final CreateProductCommand createProductCommand = CreateProductCommand.builder()
-                .id(UUID.randomUUID())
+                .id(randomUUID)
                 .name(productRestModel.getName())
                 .description(productRestModel.getDescription())
                 .price(productRestModel.getPrice())
                 .build();
 
-        return ResponseEntity.ok(this.commandGateway.sendAndWait(createProductCommand));
+        return ResponseEntity.accepted().body(this.commandGateway.sendAndWait(createProductCommand));
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> updateProduct(@RequestBody ProductRestModel productRestModel) {
+
+        final UpdateProductCommand updateProductCommand = UpdateProductCommand.builder()
+                .id(productRestModel.getId())
+                .name(productRestModel.getName())
+                .description(productRestModel.getDescription())
+                .price(productRestModel.getPrice())
+                .build();
+
+        return ResponseEntity.accepted()
+                .body(this.commandGateway.sendAndWait(updateProductCommand));
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<?> deleteProduct(@RequestBody ProductRestModel productRestModel) {
+
+        final DeleteProductCommand deleteProductCommand = DeleteProductCommand.builder()
+                .id(productRestModel.getId())
+                .name(productRestModel.getName())
+                .description(productRestModel.getDescription())
+                .price(productRestModel.getPrice())
+                .build();
+
+        this.commandGateway.send(deleteProductCommand);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

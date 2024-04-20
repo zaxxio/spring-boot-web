@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.wsd.app.domain.ProductEntity;
 import org.wsd.app.eventsourcing.events.ProductCreatedEvent;
+import org.wsd.app.eventsourcing.events.ProductDeletedEvent;
+import org.wsd.app.eventsourcing.events.ProductUpdatedEvent;
 import org.wsd.app.eventsourcing.payload.ProductRestModel;
 import org.wsd.app.eventsourcing.query.FetchProductByIdQuery;
 import org.wsd.app.eventsourcing.query.FetchProductsQuery;
@@ -21,6 +23,7 @@ import org.wsd.app.mapper.ProductMapper;
 import org.wsd.app.repository.ProductRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Data
@@ -42,6 +45,28 @@ public class ProductProjection {
 
         this.productRepository.save(productEntity);
     }
+
+
+    @EventHandler(payloadType = ProductUpdatedEvent.class)
+    public void on(ProductUpdatedEvent productUpdatedEvent) {
+        Optional<ProductEntity> productEntity = productRepository.findById(productUpdatedEvent.getId());
+        if (productEntity.isPresent()) {
+            ProductEntity productEntityToUpdate = productEntity.get();
+            BeanUtils.copyProperties(productUpdatedEvent, productEntityToUpdate);
+            this.productRepository.save(productEntityToUpdate);
+        }
+    }
+
+    @EventHandler(payloadType = ProductDeletedEvent.class)
+    public void on(ProductDeletedEvent productDeletedEvent) {
+        Optional<ProductEntity> productEntity = productRepository.findById(productDeletedEvent.getId());
+        if (productEntity.isPresent()) {
+            ProductEntity productEntityToDelete = productEntity.get();
+            BeanUtils.copyProperties(productDeletedEvent, productEntityToDelete);
+            this.productRepository.delete(productEntityToDelete);
+        }
+    }
+
 
     @QueryHandler
     public List<ProductRestModel> handle(FetchProductsQuery fetchProductsQuery) {
