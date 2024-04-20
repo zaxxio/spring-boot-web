@@ -17,9 +17,9 @@ import org.wsd.app.eventsourcing.events.ProductCreatedEvent;
 import org.wsd.app.eventsourcing.payload.ProductRestModel;
 import org.wsd.app.eventsourcing.query.FetchProductByIdQuery;
 import org.wsd.app.eventsourcing.query.FetchProductsQuery;
+import org.wsd.app.mapper.ProductMapper;
 import org.wsd.app.repository.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -46,13 +46,9 @@ public class ProductProjection {
     @QueryHandler
     public List<ProductRestModel> handle(FetchProductsQuery fetchProductsQuery) {
         List<ProductEntity> productEntities = this.productRepository.findAll();
-        List<ProductRestModel> productRestModels = new ArrayList<>();
-        for (ProductEntity productEntity : productEntities) {
-            ProductRestModel productRestModel = new ProductRestModel();
-            BeanUtils.copyProperties(productEntity, productRestModel);
-            productRestModels.add(productRestModel);
-        }
-        return productRestModels;
+        return productEntities.stream()
+                .map(ProductMapper.Instance::toProductRestModel)
+                .toList();
     }
 
     @QueryHandler
