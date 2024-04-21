@@ -29,7 +29,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -37,10 +36,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
-import org.wsd.app.domain.PhotoEntity;
-import org.wsd.app.payload.Payload;
 import org.wsd.app.repository.PhotoRepository;
-import org.wsd.app.security.auth.resquest.SignInRequest;
 
 import java.sql.Timestamp;
 import java.time.Instant;

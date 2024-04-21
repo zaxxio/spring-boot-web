@@ -8,12 +8,12 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
-import org.wsd.app.eventsourcing.command.CreateProductCommand;
-import org.wsd.app.eventsourcing.command.DeleteProductCommand;
-import org.wsd.app.eventsourcing.command.UpdateProductCommand;
-import org.wsd.app.eventsourcing.events.ProductCreatedEvent;
-import org.wsd.app.eventsourcing.events.ProductDeletedEvent;
-import org.wsd.app.eventsourcing.events.ProductUpdatedEvent;
+import org.wsd.app.eventsourcing.command.product.CreateProductCommand;
+import org.wsd.app.eventsourcing.command.product.DeleteProductCommand;
+import org.wsd.app.eventsourcing.command.product.UpdateProductCommand;
+import org.wsd.app.eventsourcing.events.product.ProductCreatedEvent;
+import org.wsd.app.eventsourcing.events.product.ProductDeletedEvent;
+import org.wsd.app.eventsourcing.events.product.ProductUpdatedEvent;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -28,6 +28,7 @@ public class ProductAggregate implements Serializable {
     private String name;
     private String description;
     private Double price;
+    private Double quantity;
 
     @CommandHandler(payloadType = CreateProductCommand.class)
     public ProductAggregate(CreateProductCommand createProductCommand) {
@@ -36,6 +37,7 @@ public class ProductAggregate implements Serializable {
                 .name(createProductCommand.getName())
                 .description(createProductCommand.getDescription())
                 .price(createProductCommand.getPrice())
+                .quantity(createProductCommand.getQuantity())
                 .build();
         AggregateLifecycle.apply(productCreatedEvent);
     }
@@ -46,6 +48,7 @@ public class ProductAggregate implements Serializable {
         this.name = productCreatedEvent.getName();
         this.description = productCreatedEvent.getDescription();
         this.price = productCreatedEvent.getPrice();
+        this.quantity = productCreatedEvent.getQuantity();
     }
 
     @CommandHandler(payloadType = UpdateProductCommand.class)
@@ -55,6 +58,7 @@ public class ProductAggregate implements Serializable {
                 .name(updateProductCommand.getName())
                 .description(updateProductCommand.getDescription())
                 .price(updateProductCommand.getPrice())
+                .quantity(updateProductCommand.getQuantity())
                 .build();
         AggregateLifecycle.apply(productUpdatedEvent);
     }
@@ -65,6 +69,7 @@ public class ProductAggregate implements Serializable {
         this.name = productUpdatedEvent.getName();
         this.description = productUpdatedEvent.getDescription();
         this.price = productUpdatedEvent.getPrice();
+        this.quantity = productUpdatedEvent.getQuantity();
     }
 
     @CommandHandler(payloadType = DeleteProductCommand.class)
@@ -74,6 +79,7 @@ public class ProductAggregate implements Serializable {
                 .name(deleteProductCommand.getName())
                 .description(deleteProductCommand.getDescription())
                 .price(deleteProductCommand.getPrice())
+                .quantity(deleteProductCommand.getQuantity())
                 .build();
         AggregateLifecycle.apply(productDeletedEvent);
     }
@@ -84,6 +90,7 @@ public class ProductAggregate implements Serializable {
         this.name = productDeletedEvent.getName();
         this.description = productDeletedEvent.getDescription();
         this.price = productDeletedEvent.getPrice();
+        this.quantity = productDeletedEvent.getQuantity();
     }
 
 }

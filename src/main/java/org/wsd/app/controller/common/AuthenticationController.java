@@ -28,13 +28,15 @@ import org.wsd.app.security.auth.impl.TwoFactorFailedException;
 @Tag(name = "Authentication Controller")
 @RequiredArgsConstructor
 public class AuthenticationController {
+
     private final AuthenticationService authenticationService;
-    @ResponseStatus(value = HttpStatus.OK)
+
     @Operation(description = "Sign In", summary = "Endpoint for user sign in.")
     @PostMapping(path = "/signIn",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
     )
+    @ResponseStatus(value = HttpStatus.OK)
     @RateLimiter(name = ResilienceConfig.AUTH_SERVICE_API)
     public ResponseEntity<?> signIn(@Valid @RequestBody
                                     @Parameter(description = "SignInRequest model with username, password and two-factor authentication code to get access token.") SignInRequest signInRequest
@@ -42,6 +44,8 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(authenticationService.signIn(signInRequest));
     }
+
+
     @Operation(description = "Sign Up", summary = "Endpoint for user sign up.")
     @PostMapping(path = "/signUp",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -50,8 +54,10 @@ public class AuthenticationController {
     @ResponseStatus(HttpStatus.CREATED)
     @RateLimiter(name = ResilienceConfig.AUTH_SERVICE_API)
     public ResponseEntity<?> signUp(@Valid @RequestBody
-                                        @Parameter(description = "SignUpRequest model with username, password to register user.") SignUpRequest signUpRequest) throws UsernameAlreadyExistsException {
+                                    @Parameter(description = "SignUpRequest model with username, password to register user.") SignUpRequest signUpRequest) throws UsernameAlreadyExistsException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authenticationService.signUp(signUpRequest));
     }
+
+
 }

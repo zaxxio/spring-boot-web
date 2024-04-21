@@ -12,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wsd.app.config.SwaggerConfig;
-import org.wsd.app.eventsourcing.command.CreateProductCommand;
-import org.wsd.app.eventsourcing.command.DeleteProductCommand;
-import org.wsd.app.eventsourcing.command.UpdateProductCommand;
+import org.wsd.app.eventsourcing.command.product.CreateProductCommand;
+import org.wsd.app.eventsourcing.command.product.DeleteProductCommand;
+import org.wsd.app.eventsourcing.command.product.UpdateProductCommand;
 import org.wsd.app.eventsourcing.payload.ProductRestModel;
 
 import java.util.UUID;
@@ -40,6 +40,7 @@ public class ProductCommandController {
                 .name(productRestModel.getName())
                 .description(productRestModel.getDescription())
                 .price(productRestModel.getPrice())
+                .quantity(productRestModel.getQuantity())
                 .build();
 
         return ResponseEntity.accepted().body(this.commandGateway.sendAndWait(createProductCommand));
@@ -54,6 +55,7 @@ public class ProductCommandController {
                 .name(productRestModel.getName())
                 .description(productRestModel.getDescription())
                 .price(productRestModel.getPrice())
+                .quantity(productRestModel.getQuantity())
                 .build();
 
         return ResponseEntity.accepted()
@@ -69,6 +71,7 @@ public class ProductCommandController {
                 .name(productRestModel.getName())
                 .description(productRestModel.getDescription())
                 .price(productRestModel.getPrice())
+                .quantity(productRestModel.getQuantity())
                 .build();
 
         this.commandGateway.send(deleteProductCommand);

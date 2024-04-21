@@ -20,4 +20,5 @@ public class ProductEntity extends AbstractAuditableEntity implements Serializab
     private String name;
     private String description;
     private Double price;
+    private Double quantity;
 }
