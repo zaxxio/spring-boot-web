@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 import org.wsd.app.core.events.BaseEvent;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
 public class AccountClosedEvent extends BaseEvent {

@@ -68,12 +68,18 @@ public class UserEntity extends AbstractAuditableEntity implements UserDetails {
     private String password;
     @CreatedBy
     private String createdBy;
+    @Builder.Default
     @OneToMany(targetEntity = RoleEntity.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<RoleEntity> roleEntities = new HashSet<>();
+    @Builder.Default
     private boolean accountNonExpired = true;
+    @Builder.Default
     private boolean accountNonLocked = true;
+    @Builder.Default
     private boolean credentialsNonExpired = true;
+    @Builder.Default
     private boolean enabled = true;
+    @Builder.Default
     private boolean is2FAEnabled = false;
     private String secret;
 
