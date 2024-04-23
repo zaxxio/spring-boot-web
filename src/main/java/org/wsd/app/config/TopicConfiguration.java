@@ -32,6 +32,7 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class TopicConfiguration {
     public static final String SENSOR = "SENSOR_TOPIC";
+    public static final String EVENT_STORE = "EVENT_STORE";
 
     @Bean
     public NewTopic sensorTopic() {
@@ -40,6 +41,15 @@ public class TopicConfiguration {
                 // .replicas(3)
                 .config(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE)
                 .config(TopicConfig.DELETE_RETENTION_MS_CONFIG, "86400000")
+                .config(TopicConfig.COMPRESSION_TYPE_CONFIG, CompressionType.SNAPPY.toString())
+                .build();
+    }
+
+    @Bean
+    public NewTopic eventStoreTopic() {
+        return TopicBuilder.name(TopicConfiguration.EVENT_STORE)
+                .partitions(3)
+                .config(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT)
                 .config(TopicConfig.COMPRESSION_TYPE_CONFIG, CompressionType.SNAPPY.toString())
                 .build();
     }

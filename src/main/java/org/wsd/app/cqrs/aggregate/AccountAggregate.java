@@ -8,7 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.wsd.app.core.aggregates.AggregateRoot;
 import org.wsd.app.cqrs.commands.CreateAccountCommand;
+import org.wsd.app.cqrs.events.AccountClosedEvent;
 import org.wsd.app.cqrs.events.AccountCreatedEvent;
+import org.wsd.app.cqrs.events.CashDepositedEvent;
+import org.wsd.app.cqrs.events.CashWithdrawnEvent;
 
 import java.util.Date;
 
@@ -16,7 +19,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class AccountAggregate extends AggregateRoot {
 
-    private Boolean active;
     private Double balance;
 
     public AccountAggregate(CreateAccountCommand createAccountCommand) {
@@ -33,7 +35,49 @@ public class AccountAggregate extends AggregateRoot {
 
     public void apply(AccountCreatedEvent accountCreatedEvent) {
         this.id = accountCreatedEvent.getId();
-        this.active = true;
         this.balance = accountCreatedEvent.getBalance();
+    }
+
+    public void depositCash(Double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
+        raiseEvent(
+                CashDepositedEvent.builder()
+                        .id(this.id)
+                        .amount(amount)
+                        .build()
+        );
+    }
+
+    public void apply(CashDepositedEvent cashDepositedEvent) {
+        this.id = cashDepositedEvent.getId();
+        this.balance += cashDepositedEvent.getAmount();
+    }
+
+    public void withdrawCash(Double amount) {
+        raiseEvent(
+                CashWithdrawnEvent.builder()
+                        .id(this.id)
+                        .amount(amount)
+                        .build()
+        );
+    }
+
+    public void apply(CashWithdrawnEvent cashWithdrawnEvent) {
+        this.id = cashWithdrawnEvent.getId();
+        this.balance -= cashWithdrawnEvent.getAmount();
+    }
+
+    public void closeAccount() {
+        raiseEvent(
+                AccountClosedEvent.builder()
+                        .id(this.id)
+                        .build()
+        );
+    }
+
+    public void apply(AccountClosedEvent accountClosedEvent) {
+        this.id = accountClosedEvent.getId();
     }
 }
