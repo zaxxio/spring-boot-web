@@ -26,12 +26,15 @@ public class AccountEventStore implements EventStore {
 
     @Override
     public void saveEvents(String aggregateId, Iterable<BaseEvent> events, int expectedVersion) {
-        var eventStream = eventRepository.findByAggregateIdentifier(aggregateId);
-        if (expectedVersion == -1 && eventStream.get(eventStream.size() - 1).getVersion() != expectedVersion) {
-            throw new ConcurrencyException("Version does not match expected version.");
-        }
+        List<EventModel> eventStream = eventRepository.findByAggregateIdentifier(aggregateId);
+//        if (expectedVersion == -1 && eventStream.get(eventStream.size() - 1).getVersion() != expectedVersion) {
+//            throw new ConcurrencyException("Version does not match expected version.");
+//        }
         int version = expectedVersion;
         for (BaseEvent event : events) {
+
+            version++;
+
             event.setVersion(version);
 
             EventModel eventModel = EventModel.builder()

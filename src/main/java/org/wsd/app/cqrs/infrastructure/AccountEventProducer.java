@@ -4,23 +4,68 @@
 
 package org.wsd.app.cqrs.infrastructure;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.wsd.app.config.TopicConfiguration;
 import org.wsd.app.core.events.BaseEvent;
 import org.wsd.app.core.producer.EventProducer;
+import org.wsd.app.cqrs.events.AccountCreatedEvent;
+import org.wsd.app.event.AccountCreatedEventAvro;
+import org.wsd.app.event.SensorEventAvro;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+@Log4j2
 @Service
 public class AccountEventProducer implements EventProducer {
 
     @Autowired
-    private KafkaTemplate<String, BaseEvent> kafkaTemplate;
+    private KafkaTemplate<UUID, AccountCreatedEventAvro> kafkaTemplate;
 
     @Override
+    @Transactional
     public void produce(String topic, BaseEvent baseEvent) {
-        this.kafkaTemplate.send(topic, baseEvent);
+        AccountCreatedEvent event = (AccountCreatedEvent) baseEvent;
+
+
+        AccountCreatedEventAvro eventAvro = AccountCreatedEventAvro.newBuilder()
+                .setId(event.getId())
+                .setAccountHolder(event.getAccountHolder())
+                .setAccountType(event.getAccountType())
+                .setVersion(event.getVersion())
+                .setBalance(event.getBalance())
+                .setCreatedAt(event.getCreatedAt())
+                .build();
+
+        final Message<AccountCreatedEventAvro> message = MessageBuilder
+                .withPayload(eventAvro)
+                .setHeader(KafkaHeaders.KEY, UUID.randomUUID())
+                .setHeader("schema.version", "v1")
+                .setHeader(KafkaHeaders.TOPIC, event.getClass().getSimpleName())
+                .setHeader(KafkaHeaders.TIMESTAMP, System.currentTimeMillis())
+                .build();
+
+        CompletableFuture<? extends SendResult<UUID, ?>> future = kafkaTemplate.send(message);
+        future.thenAccept(uuidSendResult -> {
+            try {
+                log.info("Produced : " + future.get().getProducerRecord().value());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }).exceptionally(exception -> {
+            log.error(exception.getMessage());
+            return null;
+        });
+
+        this.kafkaTemplate.send(topic, eventAvro);
     }
 }

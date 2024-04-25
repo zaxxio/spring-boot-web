@@ -8,7 +8,7 @@ import org.wsd.app.core.commands.BaseCommand;
 import org.wsd.app.core.commands.CommandHandler;
 
 public interface CommandDispatcher<T extends BaseCommand> {
-    <T extends BaseCommand> void registerHandler(Class<T> type, CommandHandler<T> command);
+    <T extends BaseCommand> void registerHandler(Class<T> type, CommandHandler command);
 
     <T extends BaseCommand> void send(T command);
 }

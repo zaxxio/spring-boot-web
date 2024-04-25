@@ -5,7 +5,6 @@
 package org.wsd.app.core.infrastructure;
 
 import org.wsd.app.core.events.BaseEvent;
-import org.wsd.app.core.events.EventModel;
 import org.wsd.app.cqrs.infrastructure.AggregateNotFoundException;
 
 import java.util.List;

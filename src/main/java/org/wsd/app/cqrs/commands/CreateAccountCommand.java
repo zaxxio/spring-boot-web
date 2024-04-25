@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.wsd.app.core.commands.BaseCommand;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -19,6 +20,6 @@ import java.util.Date;
 public class CreateAccountCommand extends BaseCommand {
     private String accountHolder;
     private String accountType;
-    private Date createdAt;
+    private LocalDate createdAt;
     private Double balance;
 }

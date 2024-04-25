@@ -4,6 +4,7 @@
 
 package org.wsd.app.cqrs.handler;
 
+import org.wsd.app.core.commands.BaseCommand;
 import org.wsd.app.cqrs.commands.CloseAccountCommand;
 import org.wsd.app.cqrs.commands.CreateAccountCommand;
 import org.wsd.app.cqrs.commands.DepositCashCommand;

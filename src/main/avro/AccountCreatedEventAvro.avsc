@@ -1,0 +1,36 @@
+{
+  "type": "record",
+  "name": "AccountCreatedEventAvro",
+  "namespace": "org.wsd.app.event",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "accountHolder",
+      "type": "string"
+    },
+    {
+      "name": "accountType",
+      "type": "string"
+    },
+    {
+      "name": "createdAt",
+      "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    },
+    {
+      "name": "balance",
+      "type": "double",
+      "default": 0
+    },
+    {
+      "name": "version",
+      "type": "int",
+      "default": 0
+    }
+  ]
+}

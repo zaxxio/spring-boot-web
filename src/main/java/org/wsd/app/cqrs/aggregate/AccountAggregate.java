@@ -13,7 +13,7 @@ import org.wsd.app.cqrs.events.AccountCreatedEvent;
 import org.wsd.app.cqrs.events.CashDepositedEvent;
 import org.wsd.app.cqrs.events.CashWithdrawnEvent;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class AccountAggregate extends AggregateRoot {
                 AccountCreatedEvent.builder()
                         .id(createAccountCommand.getId())
                         .accountHolder(createAccountCommand.getAccountHolder())
-                        .createdAt(new Date())
+                        .createdAt(LocalDate.now())
                         .accountType(createAccountCommand.getAccountType())
                         .balance(createAccountCommand.getBalance())
                         .build()

@@ -5,6 +5,7 @@
 package org.wsd.app.cqrs.infrastructure;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
 import org.wsd.app.core.commands.BaseCommand;
 import org.wsd.app.core.commands.CommandHandler;
 import org.wsd.app.core.infrastructure.CommandDispatcher;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Log4j2
+@Service
 public class AccountCommandDispatcher implements CommandDispatcher {
 
     private Map<Class<? extends BaseCommand>, List<CommandHandler>> routes = new HashMap<>();

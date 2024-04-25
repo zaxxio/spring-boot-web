@@ -15,5 +15,5 @@ import org.wsd.app.core.messages.Message;
 @AllArgsConstructor
 @SuperBuilder
 public abstract class BaseEvent extends Message {
-    private int version;
+    private int version = -1;
 }

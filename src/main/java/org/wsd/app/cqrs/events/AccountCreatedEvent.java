@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.wsd.app.core.events.BaseEvent;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +21,6 @@ import java.util.Date;
 public class AccountCreatedEvent extends BaseEvent {
     private String accountHolder;
     private String accountType;
-    private Date createdAt;
+    private LocalDate createdAt;
     private Double balance;
 }
