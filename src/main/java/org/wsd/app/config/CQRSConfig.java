@@ -15,7 +15,7 @@ public class CQRSConfig {
 
     @Autowired
     public void registerProductCommandInterceptor(ApplicationContext context, CommandBus commandBus) {
-        //commandBus.registerDispatchInterceptor(context.getBean(ProductCommandInterceptor.class));
+        // commandBus.registerDispatchInterceptor(context.getBean(ProductCommandInterceptor.class));
     }
 
 }

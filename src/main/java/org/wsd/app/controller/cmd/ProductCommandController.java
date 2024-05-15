@@ -33,7 +33,7 @@ public class ProductCommandController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createProduct(@RequestBody ProductRestModel productRestModel) {
 
-        UUID randomUUID = UUID.randomUUID();
+        final UUID randomUUID = UUID.randomUUID();
 
         final CreateProductCommand createProductCommand = CreateProductCommand.builder()
                 .id(randomUUID)

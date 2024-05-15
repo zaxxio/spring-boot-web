@@ -17,4 +17,5 @@ import org.wsd.app.config.SwaggerConfig;
 @Tag(name = "Order Command Controller")
 @SecurityRequirement(name = SwaggerConfig.BEARER_TOKEN)
 public class OrderCommandController {
+
 }
