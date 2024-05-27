@@ -21,7 +21,7 @@ public class QuartzSchedulerService {
     @PostConstruct
     public void onInit() {
         try {
-            scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener(this));
+            // scheduler.getListenerManager().addTriggerListener(new SimpleTriggerListener(this));
             scheduler.start();
         } catch (SchedulerException e) {
             throw new RuntimeException(e);

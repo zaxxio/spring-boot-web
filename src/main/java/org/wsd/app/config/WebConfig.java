@@ -40,10 +40,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.favorParameter(true)
+        configurer.favorParameter(false)
                 .parameterName("format")
                 .ignoreAcceptHeader(false)
                 .defaultContentType(MediaType.APPLICATION_JSON)
+                .useRegisteredExtensionsOnly(true)
                 .mediaType("json", MediaType.APPLICATION_JSON)
                 .mediaType("xml", MediaType.APPLICATION_XML);
     }

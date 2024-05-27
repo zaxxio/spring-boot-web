@@ -85,6 +85,7 @@ public class SecurityConfig {
             "/v1/spring-boot-app/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
+            "/api/process/**",
             "/public/**",
             "/actuator/**",
              "/websocket"

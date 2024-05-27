@@ -32,10 +32,7 @@ import org.wsd.app.mongo.Address;
 import org.wsd.app.mongo.Gender;
 import org.wsd.app.mongo.Person;
 import org.wsd.app.mongo.PersonRepository;
-import org.wsd.app.quartz.QuartzSchedulerService;
 import org.wsd.app.repository.PhotoRepository;
-
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +49,7 @@ public class DataInitializer implements CommandLineRunner {
         photoEntity.setId(1L);
         String name = new Faker().file().fileName();
         photoEntity.setName(name);
-        PhotoEntity photo = photoRepository.save(photoEntity);
+        final PhotoEntity persistedPhotoEntity = photoRepository.save(photoEntity);
 
 
         final Person person = new Person();

@@ -11,6 +11,7 @@ import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.wsd.app.domain.ProductEntity;
 import org.wsd.app.eventsourcing.events.product.ProductCreatedEvent;

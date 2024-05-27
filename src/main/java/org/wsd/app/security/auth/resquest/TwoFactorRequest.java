@@ -23,8 +23,12 @@
 package org.wsd.app.security.auth.resquest;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class TwoFactorRequest {
+    private MultipartFile multipartFile;
     private Boolean is2FAEnabled;
+    private SignUpRequest signUpRequest;
+
 }
